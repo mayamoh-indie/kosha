@@ -20,8 +20,8 @@ jobs:
     name: 1 · Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Run unit tests
@@ -39,8 +39,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Lint Python (ruff.toml)
@@ -62,21 +62,22 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
+      - uses: actions/checkout@v5
+      - uses: github/codeql-action/init@v4
         with:
           languages: python, javascript-typescript
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@v4
         with:
           output: codeql-results
       # CodeQL only reports alerts; fail this stage so findings block the deploy.
+      # Each finding is also posted as an annotation, visible on the run page.
       - name: Block on findings
         shell: bash
         run: |
           count=$(jq -s '[.[].runs[].results[]] | length' codeql-results/*.sarif)
           echo "### CodeQL findings: $count" >> "$GITHUB_STEP_SUMMARY"
-          jq -r '.runs[].results[] | "- \(.ruleId): \(.message.text) (\(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine))"' \
-            codeql-results/*.sarif >> "$GITHUB_STEP_SUMMARY"
+          jq -r '.runs[].results[] | "::error file=\(.locations[0].physicalLocation.artifactLocation.uri),line=\(.locations[0].physicalLocation.region.startLine)::\(.ruleId): \(.message.text | gsub("\n"; " "))"' \
+            codeql-results/*.sarif
           test "$count" -eq 0
 
   build:
@@ -84,13 +85,13 @@ jobs:
     needs: [lint, security]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Collect site files
         run: |
           mkdir _site
           cp -r web index.html .nojekyll api.py payoff.py tax_tools.py sample-debts.json _site/
           echo "### Site files: $(find _site -type f | wc -l)" >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: site
           path: _site
@@ -107,7 +108,7 @@ jobs:
       name: production
       url: https://mayamoh-indie.github.io/kosha/
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: site
           path: _site
