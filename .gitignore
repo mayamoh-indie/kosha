@@ -5,4 +5,3 @@ __pycache__/
 .env.*
 !.env.example
 private-data/
-_site/

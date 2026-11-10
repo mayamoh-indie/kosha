@@ -6,7 +6,7 @@ Your Financial Assistant. Canadian personal finance tools for money clarity, bud
 
 Working prototype: a dependency-free Python calculation engine with a browser dashboard for debt, salary, and RRSP withdrawal planning.
 
-Live site: https://mayamoh-indie.github.io/kosha/ — published from `main` by the Pages workflow after the tests pass. There, the same Python engine runs in the browser through [Pyodide](https://pyodide.org/) (a one-time download of about 10 MB), so entries never leave the page.
+Live site: https://mayamoh-indie.github.io/kosha/ — GitHub Pages serves `main` as-is (Source: *Deploy from a branch*, `main`, `/ (root)`). `.nojekyll` stops the README from becoming the home page, and the root `index.html` forwards to `web/`. There, the same Python engine runs in the browser through [Pyodide](https://pyodide.org/) (a one-time download of about 10 MB), so entries never leave the page. The Tests workflow runs the test suite on every push and pull request.
 
 ## Open the dashboard locally
 
