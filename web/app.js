@@ -1,7 +1,7 @@
 const $ = id => document.getElementById(id);
 const money = value => new Intl.NumberFormat('en-CA', {style:'currency',currency:'CAD'}).format(Number(value));
 const labels = {avalanche:'Highest interest first',snowball:'Smallest balance first',custom:'Your entered order'};
-let results = [], selected = 0, shown = 24, revision = 0, snapshot = [];
+let results = [], selected = 0, shown = 24, revision = 0, snapshot = [], persist = false;
 
 function invalidate() {
   revision++;
@@ -12,11 +12,11 @@ function invalidate() {
   $('status').textContent = 'Your inputs changed. Compare again to update your plan.';
 }
 
-function addDebt(debt = {name:'',balance:'',apr:'',minimum:''}) {
+function addDebt(debt = {}) {
   const row = document.createElement('div'); row.className = 'debt';
-  row.innerHTML = '<div class="debt-top"><label>Debt name<input name="name" required maxlength="100" placeholder="e.g. Credit card"></label><button class="remove" type="button">Remove</button></div><div class="fields"><label>Balance (CAD)<input name="balance" type="number" min="0" step="0.01" required></label><label>APR (%)<input name="apr" type="number" min="0" max="100" step="any" required></label><label>Minimum (CAD)<input name="minimum" type="number" min="0" step="0.01" required></label></div>';
-  for (const input of row.querySelectorAll('input')) input.value = debt[input.name];
-  row.querySelector('button').addEventListener('click', () => {row.remove(); invalidate();});
+  row.innerHTML = '<div class="debt-top"><label>Debt name<input name="name" required maxlength="100" placeholder="e.g. Credit card"></label><button class="remove" type="button">Remove</button></div><div class="fields"><label>Balance (CAD)<input name="balance" type="number" min="0" step="0.01" required></label><label>APR (%)<input name="apr" type="number" min="0" max="100" step="any" required></label><label>Minimum (CAD)<input name="minimum" type="number" min="0" step="0.01" required></label><label>Original amount (optional)<input name="original" type="number" min="0" step="0.01" placeholder="For progress"></label></div>';
+  for (const input of row.querySelectorAll('input')) input.value = debt[input.name] ?? '';
+  row.querySelector('button').addEventListener('click', () => {persist = true; row.remove(); invalidate();});
   $('debts').append(row);
 }
 
@@ -35,7 +35,7 @@ async function calculate(event) {
     const data = response.data;
     if (version !== revision) return;
     if (!response.ok) throw new Error(data.error || 'Unable to calculate this plan.');
-    snapshot = debts; results = data; selected = 0; shown = 24; render();
+    snapshot = debts; results = data; selected = 0; shown = 24; save(); render();
   } catch (error) {
     if (version !== revision) return;
     $('error').textContent = error.message;
@@ -51,7 +51,7 @@ function render() {
     const title = document.createElement('span'); title.textContent = labels[result.strategy];
     const duration = document.createElement('strong'); duration.textContent = result.status === 'paid_off' ? `${result.months} mo` : 'No payoff';
     const cost = document.createElement('small'); cost.textContent = `${money(result.interest)} interest${result.status === 'paid_off' ? '' : ' so far'}`;
-    button.append(title,duration,cost); button.addEventListener('click',() => {selected=index; shown=24; render();}); $('cards').append(button);
+    button.append(title,duration,cost); button.addEventListener('click',() => {selected=index; shown=24; save(); render();}); $('cards').append(button);
   });
   const result = results[selected];
   $('status').textContent = result.status === 'paid_off' ? (result.months ? 'Same monthly budget. Three ways forward. Select a plan to explore.' : 'No outstanding debt. You’re starting with a clean slate.') : result.message;
@@ -95,8 +95,23 @@ function download() {
   const link=document.createElement('a'); link.href=url; link.download=`kosha-${result.strategy}.csv`; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
+// The home page reads this plan. It stays in this browser's storage only.
+function save() {
+  if (!persist) return;
+  try { localStorage.setItem('kosha-plan', JSON.stringify({debts:snapshot, monthly_budget:$('budget').value, strategy:selected})); } catch {}
+}
+
+function loadSaved() {
+  let plan = null;
+  try { plan = JSON.parse(localStorage.getItem('kosha-plan')); } catch {}
+  if (!plan) return loadSample();
+  persist = true;
+  $('debts').replaceChildren(); plan.debts.forEach(addDebt); $('budget').value = plan.monthly_budget;
+  calculate().then(() => { if (results[plan.strategy]) { selected = plan.strategy; save(); render(); } });
+}
+
 async function loadSample() {
-  invalidate(); const version=revision;
+  persist = false; invalidate(); const version=revision;
   try {
     const response=await fetch('sample-debts.json'); if (!response.ok) throw new Error('Sample data unavailable.');
     const sample=await response.json(); if (version!==revision) return;
@@ -104,9 +119,9 @@ async function loadSample() {
   } catch(error) { $('error').textContent=error.message; }
 }
 $('form').addEventListener('submit',calculate);
-$('form').addEventListener('input',invalidate);
-$('add').addEventListener('click',()=>{addDebt(); invalidate(); $('debts').lastChild.querySelector('input').focus();});
+$('form').addEventListener('input',()=>{persist=true; invalidate();});
+$('add').addEventListener('click',()=>{persist=true; addDebt(); invalidate(); $('debts').lastChild.querySelector('input').focus();});
 $('sample').addEventListener('click',loadSample);
 $('download').addEventListener('click',download);
 $('more').addEventListener('click',()=>{shown+=60;renderSchedule();});
-loadSample();
+loadSaved();

@@ -14,9 +14,11 @@ Live site: https://mayamoh-indie.github.io/kosha/ — published from `main` by t
 python dashboard.py
 ```
 
-Open http://127.0.0.1:8765 for the debt planner; the sidebar links to the salary and RRSP pages. Stop with Ctrl+C.
+Open http://127.0.0.1:8765 for the home dashboard; the sidebar links to the debt planner, salary, and RRSP pages. Stop with Ctrl+C.
 
-Add/edit/remove debts, compare three strategies, view the balance chart and monthly schedule, and export CSV. Inputs are kept only in the page and reset on refresh. This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in, bank connection, or persistent storage is included.
+Home shows payoff progress, a debt-free countdown, a calendar payoff timeline, and progress per debt for your chosen plan. Month 1 is next calendar month. Progress uses each debt's optional original amount; without it, that debt counts as 0% paid.
+
+In the planner, add/edit/remove debts, compare three strategies, view the balance chart and monthly schedule, and export CSV. Once you edit the sample, your plan is saved in this browser's local storage only (never sent anywhere) and can be cleared from Home. Until then, Home shows fictional sample data. This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in or bank connection is included.
 
 The salary tool estimates 2026 Ontario annualized take-home pay. The RRSP tool calculates gross-to-net withholding and the minimum gross withdrawal for a target net amount. See [tax assumptions and official sources](TAX_ASSUMPTIONS.md) for scope and exclusions.
 

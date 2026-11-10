@@ -29,8 +29,8 @@ class DashboardTests(unittest.TestCase):
             connection.request('GET', '/', headers=headers)
             response = connection.getresponse()
             self.assertEqual(response.status, 200)
-            self.assertIn(b'A clearer path', response.read())
-            for path, marker in [('/salary.html', b'salary-form'), ('/rrsp.html', b'rrsp-form'), ('/api.js', b'pyodide')]:
+            self.assertIn(b'Payoff progress', response.read())
+            for path, marker in [('/planner.html', b'A clearer path'), ('/salary.html', b'salary-form'), ('/rrsp.html', b'rrsp-form'), ('/api.js', b'pyodide')]:
                 connection.request('GET', path, headers=headers)
                 response = connection.getresponse()
                 self.assertEqual(response.status, 200)
