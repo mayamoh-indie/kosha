@@ -14,11 +14,18 @@ Live site: https://mayamoh-indie.github.io/kosha/ — published from `main` by t
 python dashboard.py
 ```
 
-Open http://127.0.0.1:8765 for the home dashboard; the sidebar links to the debt planner, salary, and RRSP pages. Stop with Ctrl+C.
+Open http://127.0.0.1:8765. Stop with Ctrl+C. The sidebar links to:
 
-Home shows payoff progress, a debt-free countdown, a calendar payoff timeline (total, by category, or by debt), and progress by category for your chosen plan. Each debt has a category; older saved plans default to Other. Month 1 is next calendar month. Progress uses each debt's optional original amount; without it, that debt counts as 0% paid.
+- **Home**: payoff progress, debt-free countdown, payoff timeline (total, by category, or by debt), and progress by category.
+- **Debts**: a card per debt (minimum, APR, balance, progress, payoff month), search and sort, and balance donuts by category and debt. *Edit debts* opens the worksheet to add/edit/remove debts, compare strategies, view the monthly schedule, and export CSV.
+- **Strategy**: pay day, monthly budget, one-time extra payments, payoff priority, a plan summary, and payments by month.
+- **Payoff plan**: steps that each end when a debt is paid off, with the debts getting extra and monthly payment details.
+- **Tracking**: past-due and upcoming payments, marking them paid, completed payments, and a calendar. Records don't change balances; update balances from statements.
+- **Salary** and **RRSP withdrawal** calculators.
 
-In the planner, add/edit/remove debts, compare three strategies, view the balance chart and monthly schedule, and export CSV. Once you edit the sample, your plan is saved in this browser's local storage only (never sent anywhere) and can be cleared from Home. Until then, Home shows fictional sample data. This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in or bank connection is included.
+Dates come from the plan's start month: submitting balances makes this month month 0, and month 1 is next month. Payments fall on the chosen pay day (1–28). Progress uses each debt's optional original amount; without it, that debt counts as 0% paid. Each debt has a category; older saved plans default to Other.
+
+Until you edit the fictional sample, pages show it. Your plan and payment records are saved in this browser's local storage only (never sent anywhere) and can be cleared from Home. This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in or bank connection is included.
 
 The salary tool estimates 2026 Ontario annualized take-home pay. The RRSP tool calculates gross-to-net withholding and the minimum gross withdrawal for a target net amount. See [tax assumptions and official sources](TAX_ASSUMPTIONS.md) for scope and exclusions.
 
@@ -41,11 +48,12 @@ The budget includes all minimum payments plus any extra. `all` (default) compare
 
 - CAD only. Interest is APR divided by 12, applied to opening balances before end-of-month payments, rounded per debt to cents using half-up rounding.
 - Fixed rates, fixed minimum amounts capped by the amount owed, no fees or new borrowing. These are simplified estimates, not lender statement reproductions or mortgage amortization calculations.
-- Results show months from the first simulated payment cycle, not a calendar payoff date. There is no start-date input yet.
+- Command-line results show months from the first simulated payment cycle, not calendar dates.
 - JSON output includes each monthly payment, interest charge, and closing balance; decimal values are strings to preserve cents.
 - An insufficient budget stops before an unpaid month. A plan that cannot reduce any debt principal is flagged. Other unfinished plans stop after 1,200 months, without claiming repayment.
 - Exit codes: 0 for fully paid-off plans, 1 for unaffordable/non-reducing/unfinished plans, and 2 for invalid input or file errors.
-- One-time payments, rate changes, calendar schedules, and imports remain future work.
+- The dashboard adds one-time extra payments (`extra_payments`: `[{month, amount}]` by plan month) and calendar dates; the command line does not read them yet.
+- Rate changes and imports remain future work.
 
 ## Initial scope
 

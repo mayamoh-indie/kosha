@@ -9,8 +9,9 @@ from api import respond
 ROOT = Path(__file__).parent
 ADDRESS = '127.0.0.1'
 PORT = 8765
-PAGES = {'index.html', 'planner.html', 'salary.html', 'rrsp.html', 'style.css',
-         'api.js', 'categories.js', 'home.js', 'app.js', 'tools.js'}
+PAGES = {'index.html', 'debts.html', 'planner.html', 'strategy.html', 'plan.html', 'track.html',
+         'salary.html', 'rrsp.html', 'style.css', 'api.js', 'categories.js', 'store.js', 'home.js',
+         'debts.js', 'app.js', 'strategy.js', 'plan.js', 'track.js', 'tools.js'}
 TYPES = {'html': 'text/html; charset=utf-8', 'css': 'text/css; charset=utf-8',
          'js': 'text/javascript; charset=utf-8'}
 

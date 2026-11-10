@@ -1,5 +1,4 @@
 const $ = id => document.getElementById(id);
-const money = value => new Intl.NumberFormat('en-CA', {style:'currency',currency:'CAD'}).format(Number(value));
 const labels = {avalanche:'Highest interest first',snowball:'Smallest balance first',custom:'Your entered order'};
 let results = [], selected = 0, shown = 24, revision = 0, snapshot = [], persist = false;
 
@@ -32,11 +31,11 @@ async function calculate(event) {
   $('status').textContent = 'Comparing your repayment plans…';
   const debts = rows();
   try {
-    const response = await api('/calculate', {debts,monthly_budget:$('budget').value});
-    const data = response.data;
+    // Submitted balances are as of this month, which restarts the plan clock; reloading keeps it.
+    const base = withDefaults(readStore(PLAN_KEY) || {}), restart = Boolean(event);
+    const data = await calculatePlan({...base, debts, monthly_budget:$('budget').value, start:restart ? monthKey(new Date()) : base.start});
     if (version !== revision) return;
-    if (!response.ok) throw new Error(data.error || 'Unable to calculate this plan.');
-    snapshot = debts; results = data; selected = 0; shown = 24; save(); render();
+    snapshot = debts; results = data; selected = data[base.strategy] ? base.strategy : 0; shown = 24; if (restart) save(true); render();
   } catch (error) {
     if (version !== revision) return;
     $('error').textContent = error.message;
@@ -97,18 +96,16 @@ function download() {
 }
 
 // The home page reads this plan. It stays in this browser's storage only.
-function save() {
-  if (!persist) return;
-  try { localStorage.setItem('kosha-plan', JSON.stringify({debts:snapshot, monthly_budget:$('budget').value, strategy:selected})); } catch {}
+function save(restart = false) {
+  if (persist) savePlan({...readStore(PLAN_KEY), debts:snapshot, monthly_budget:$('budget').value, strategy:selected}, restart);
 }
 
 function loadSaved() {
-  let plan = null;
-  try { plan = JSON.parse(localStorage.getItem('kosha-plan')); } catch {}
+  const plan = readStore(PLAN_KEY);
   if (!plan) return loadSample();
   persist = true;
   $('debts').replaceChildren(); plan.debts.forEach(addDebt); $('budget').value = plan.monthly_budget;
-  calculate().then(() => { if (results[plan.strategy]) { selected = plan.strategy; save(); render(); } });
+  calculate();
 }
 
 async function loadSample() {

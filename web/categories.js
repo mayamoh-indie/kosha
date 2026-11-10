@@ -10,3 +10,30 @@ const CATEGORIES = {
 };
 const categoryOf = debt => CATEGORIES[debt.category] ? debt.category : 'other';
 const iconSvg = key => `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${CATEGORIES[key].icon}</svg>`;
+const PALETTE = ['#0f3440', '#397d70', '#3d7fa3', '#69a8a9', '#1a4f61', '#a8d5e2', '#5b7d9e', '#8aa7ad'];
+
+// Progress card with icon, status, optional detail line, balance tag, and progress bar.
+// All text is set with textContent; only fixed icon markup uses innerHTML.
+function progressCard({category, title, status, detail, balance, share}) {
+  const {color} = CATEGORIES[category], pct = (share * 100).toFixed(1);
+  const card = document.createElement('div'); card.className = 'cat-card'; card.style.setProperty('--c', color);
+  const top = document.createElement('div'); top.className = 'cat-top';
+  const name = document.createElement('strong'); name.innerHTML = iconSvg(category); name.append(title);
+  const when = document.createElement('span'); when.textContent = status;
+  top.append(name, when); card.append(top);
+  if (detail) { const line = document.createElement('p'); line.className = 'cat-detail'; line.textContent = detail; card.append(line); }
+  const row = document.createElement('div'); row.className = 'cat-row';
+  const caption = document.createElement('span'); caption.className = 'eyebrow'; caption.textContent = 'PAYOFF PROGRESS';
+  const track = document.createElement('div'); track.className = 'cat-track'; track.style.setProperty('--p', `${pct}%`);
+  const bubble = document.createElement('b'); bubble.textContent = `Balance ${money(balance)}`;
+  const bar = document.createElement('div'); bar.className = 'bar'; bar.setAttribute('role', 'progressbar');
+  bar.setAttribute('aria-valuenow', Math.round(share * 100)); bar.setAttribute('aria-label', `${title} paid`);
+  bar.append(document.createElement('span')); track.append(bubble, bar);
+  const amount = document.createElement('strong'); amount.textContent = `${pct}%`;
+  row.append(caption, track, amount); card.append(row);
+  return card;
+}
+
+const payoffStatus = (balance, month, label) =>
+  !balance ? 'Paid off' : month === undefined || month === Infinity ? 'No payoff yet'
+    : `Paid off in ${month} month${month === 1 ? '' : 's'} · ${label(month)}`;
