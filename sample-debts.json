@@ -1,8 +1,8 @@
 {
   "monthly_budget": "650.00",
   "debts": [
-    {"name": "Credit card", "balance": "4200.00", "apr": "20.99", "minimum": "125.00", "original": "6000.00"},
-    {"name": "Line of credit", "balance": "7500.00", "apr": "9.50", "minimum": "150.00", "original": "9000.00"},
-    {"name": "Small loan", "balance": "900.00", "apr": "6.00", "minimum": "75.00", "original": "2500.00"}
+    {"name": "Credit card", "category": "credit_card", "balance": "4200.00", "apr": "20.99", "minimum": "125.00", "original": "6000.00"},
+    {"name": "Line of credit", "category": "line_of_credit", "balance": "7500.00", "apr": "9.50", "minimum": "150.00", "original": "9000.00"},
+    {"name": "Student loan", "category": "student_loan", "balance": "900.00", "apr": "6.00", "minimum": "75.00", "original": "2500.00"}
   ]
 }

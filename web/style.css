@@ -18,3 +18,23 @@
 a.secondary{text-decoration:none}
 @media(max-width:1100px){.home-top{grid-template-columns:1fr}}
 @media(max-width:600px){.progress-body{flex-direction:column;align-items:start;gap:16px}.ring{width:120px}.countdown{padding:22px}.horizon{width:150px}}
+select{display:block;width:100%;padding:9px 10px;background:white;border:1px solid #cfdcd8;border-radius:6px;color:#173d46;margin-top:5px;font:inherit}
+.debt-top .category{flex:0 0 140px}
+.timeline-title{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.tabs{display:flex;gap:18px}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:4px 0;color:#62777b;font-size:12px}
+.tabs button[aria-selected="true"]{color:#1a4f61;border-color:#1a4f61;font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:11px;color:#62777b;margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.cat-card{border:1px solid color-mix(in srgb,var(--c) 22%,white);background:color-mix(in srgb,var(--c) 5%,white);border-radius:11px;padding:16px 20px;margin-top:14px}
+.cat-top{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#62777b}
+.cat-top strong{display:flex;align-items:center;gap:10px;font-size:14px;color:#0f3440}
+.icon{width:22px;height:22px;color:var(--c)}
+.cat-row{display:flex;align-items:center;gap:16px;margin-top:34px}
+.cat-row .eyebrow{margin:0;white-space:nowrap}
+.cat-row>strong{font-size:14px;color:#0f3440;min-width:48px;text-align:right}
+.cat-track{position:relative;flex:1}
+.cat-track b{position:absolute;bottom:18px;left:var(--p);transform:translateX(calc(var(--p) * -1));background:var(--c);color:white;font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;white-space:nowrap}
+.cat-track .bar{margin:0;background:color-mix(in srgb,var(--c) 15%,white)}
+.cat-track .bar span{width:var(--p);background:var(--c)}
+@media(max-width:600px){.debt-top{flex-wrap:wrap}.debt-top .category{flex:1 1 100%;order:2}.cat-row{flex-wrap:wrap;gap:8px}.cat-row .eyebrow{flex-basis:100%}.cat-track{margin-top:30px}.cat-top{flex-direction:column;gap:4px}}

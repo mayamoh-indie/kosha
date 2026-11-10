@@ -14,14 +14,15 @@ function invalidate() {
 
 function addDebt(debt = {}) {
   const row = document.createElement('div'); row.className = 'debt';
-  row.innerHTML = '<div class="debt-top"><label>Debt name<input name="name" required maxlength="100" placeholder="e.g. Credit card"></label><button class="remove" type="button">Remove</button></div><div class="fields"><label>Balance (CAD)<input name="balance" type="number" min="0" step="0.01" required></label><label>APR (%)<input name="apr" type="number" min="0" max="100" step="any" required></label><label>Minimum (CAD)<input name="minimum" type="number" min="0" step="0.01" required></label><label>Original amount (optional)<input name="original" type="number" min="0" step="0.01" placeholder="For progress"></label></div>';
-  for (const input of row.querySelectorAll('input')) input.value = debt[input.name] ?? '';
+  row.innerHTML = '<div class="debt-top"><label>Debt name<input name="name" required maxlength="100" placeholder="e.g. Visa card"></label><label class="category">Category<select name="category"></select></label><button class="remove" type="button">Remove</button></div><div class="fields"><label>Balance (CAD)<input name="balance" type="number" min="0" step="0.01" required></label><label>APR (%)<input name="apr" type="number" min="0" max="100" step="any" required></label><label>Minimum (CAD)<input name="minimum" type="number" min="0" step="0.01" required></label><label>Original amount (optional)<input name="original" type="number" min="0" step="0.01" placeholder="For progress"></label></div>';
+  row.querySelector('select').append(...Object.entries(CATEGORIES).map(([key, {label}]) => new Option(label, key)));
+  for (const input of row.querySelectorAll('input,select')) input.value = input.name === 'category' ? categoryOf(debt) : debt[input.name] ?? '';
   row.querySelector('button').addEventListener('click', () => {persist = true; row.remove(); invalidate();});
   $('debts').append(row);
 }
 
 function rows() {
-  return [...$('debts').children].map(row => Object.fromEntries([...row.querySelectorAll('input')].map(input => [input.name,input.value])));
+  return [...$('debts').children].map(row => Object.fromEntries([...row.querySelectorAll('input,select')].map(input => [input.name,input.value])));
 }
 
 async function calculate(event) {

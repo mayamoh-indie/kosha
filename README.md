@@ -16,7 +16,7 @@ python dashboard.py
 
 Open http://127.0.0.1:8765 for the home dashboard; the sidebar links to the debt planner, salary, and RRSP pages. Stop with Ctrl+C.
 
-Home shows payoff progress, a debt-free countdown, a calendar payoff timeline, and progress per debt for your chosen plan. Month 1 is next calendar month. Progress uses each debt's optional original amount; without it, that debt counts as 0% paid.
+Home shows payoff progress, a debt-free countdown, a calendar payoff timeline (total, by category, or by debt), and progress by category for your chosen plan. Each debt has a category; older saved plans default to Other. Month 1 is next calendar month. Progress uses each debt's optional original amount; without it, that debt counts as 0% paid.
 
 In the planner, add/edit/remove debts, compare three strategies, view the balance chart and monthly schedule, and export CSV. Once you edit the sample, your plan is saved in this browser's local storage only (never sent anywhere) and can be cleared from Home. Until then, Home shows fictional sample data. This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in or bank connection is included.
 
