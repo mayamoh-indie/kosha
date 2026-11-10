@@ -4,7 +4,19 @@ Your Financial Assistant. Canadian personal finance tools for money clarity, bud
 
 ## Status
 
-First working baseline: a dependency-free Python debt-payoff calculator. The app interface and wider technology choices remain open.
+Working local prototype: a dependency-free Python calculation engine with a browser dashboard for debt, salary, and RRSP withdrawal planning.
+
+## Open the dashboard
+
+```sh
+python dashboard.py
+```
+
+Open http://127.0.0.1:8765 for the debt planner or http://127.0.0.1:8765/tools for salary and RRSP tools. Stop with Ctrl+C.
+
+Add/edit/remove debts, compare three strategies, view the balance chart and monthly schedule, and export CSV. Inputs are kept only in the page and reset on refresh. This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in, bank connection, or persistent storage is included.
+
+The salary tool estimates 2026 Ontario annualized take-home pay. The RRSP tool calculates gross-to-net withholding and the minimum gross withdrawal for a target net amount. See [tax assumptions and official sources](TAX_ASSUMPTIONS.md) for scope and exclusions.
 
 ## Run the calculator
 
@@ -29,7 +41,7 @@ The budget includes all minimum payments plus any extra. `all` (default) compare
 - JSON output includes each monthly payment, interest charge, and closing balance; decimal values are strings to preserve cents.
 - An insufficient budget stops before an unpaid month. A plan that cannot reduce any debt principal is flagged. Other unfinished plans stop after 1,200 months, without claiming repayment.
 - Exit codes: 0 for fully paid-off plans, 1 for unaffordable/non-reducing/unfinished plans, and 2 for invalid input or file errors.
-- One-time payments, rate changes, calendar schedules, imports, and the interface remain future work. The next improvement is an editable dashboard around this tested calculation engine.
+- One-time payments, rate changes, calendar schedules, and imports remain future work.
 
 ## Initial scope
 
