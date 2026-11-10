@@ -9,11 +9,15 @@ from api import respond
 ROOT = Path(__file__).parent
 ADDRESS = '127.0.0.1'
 PORT = 8765
-PAGES = {'index.html', 'debts.html', 'planner.html', 'strategy.html', 'plan.html', 'track.html',
+PAGES = ['index.html', 'debts.html', 'planner.html', 'strategy.html', 'plan.html', 'track.html',
          'salary.html', 'rrsp.html', 'style.css', 'api.js', 'categories.js', 'store.js', 'home.js',
-         'debts.js', 'app.js', 'strategy.js', 'plan.js', 'track.js', 'tools.js'}
+         'debts.js', 'app.js', 'strategy.js', 'plan.js', 'track.js', 'tools.js']
 TYPES = {'html': 'text/html; charset=utf-8', 'css': 'text/css; charset=utf-8',
          'js': 'text/javascript; charset=utf-8'}
+# Fixed allowlist of servable files: request paths only select an entry, never build a path.
+FILES = {f'/{name}': (ROOT / 'web' / name, TYPES[name.rsplit('.', 1)[1]]) for name in PAGES}
+FILES['/'] = FILES['/index.html']
+FILES['/sample-debts.json'] = (ROOT / 'sample-debts.json', 'application/json')
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -38,11 +42,9 @@ class Handler(BaseHTTPRequestHandler):
         if not self.allowed():
             self.respond(403, b'Forbidden', 'text/plain')
             return
-        name = 'index.html' if self.path == '/' else self.path[1:]
-        if name == 'sample-debts.json':
-            self.respond(200, (ROOT / name).read_bytes(), 'application/json')
-        elif name in PAGES:
-            self.respond(200, (ROOT / 'web' / name).read_bytes(), TYPES[name.rsplit('.', 1)[1]])
+        file = FILES.get(self.path)
+        if file:
+            self.respond(200, file[0].read_bytes(), file[1])
         else:
             self.respond(404, b'Not found', 'text/plain')
 

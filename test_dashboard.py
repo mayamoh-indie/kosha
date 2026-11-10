@@ -46,6 +46,11 @@ class DashboardTests(unittest.TestCase):
                 response = connection.getresponse()
                 self.assertEqual(response.status, 200)
                 self.assertIn(marker, response.read())
+            for path in ['/../README.md', '/web/../api.py', '/dashboard.py', '/%2e%2e/api.py']:
+                connection.request('GET', path, headers=headers)
+                response = connection.getresponse()
+                self.assertEqual(response.status, 404, path)
+                response.read()
             connection.request('POST', '/calculate', body=json.dumps({'debts': [], 'monthly_budget': 0}), headers=headers)
             response = connection.getresponse()
             self.assertEqual(response.status, 200)
