@@ -17,6 +17,15 @@ class PayoffTests(unittest.TestCase):
         self.assertEqual(result.paid, D('101.41'))
         self.assertEqual(result.schedule[-1].payment, D('41.41'))
 
+    def test_lump_sum_added_once(self):
+        debts = [Debt('A', D('100'), D('0'), D('10'))]
+        result = calculate(debts, D('20'), 'avalanche', lump_sums={2: D('50')})
+        self.assertEqual([p.payment for p in result.schedule], [D('20'), D('70'), D('10')])
+        self.assertEqual(result.months, 3)
+        self.assertEqual(calculate(debts, D('20'), 'avalanche', lump_sums={}).months, 5)
+        with self.assertRaises(ValueError):
+            calculate(debts, D('20'), 'avalanche', lump_sums={1: D('-1')})
+
     def test_zero_interest_and_rollover(self):
         debts = [Debt('A', D('25'), D('0'), D('10')), Debt('B', D('100'), D('0'), D('10'))]
         result = calculate(debts, D('60'), 'custom')

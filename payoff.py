@@ -85,13 +85,18 @@ def parse_debts(records: object) -> tuple[list[Debt], list[str]]:
 
 
 def calculate(debts: list[Debt], budget: Decimal, strategy: str,
-              max_months: int = 1200) -> Result:
-    """Custom order follows input order; other ties also follow input order."""
+              max_months: int = 1200, lump_sums: Optional[dict[int, Decimal]] = None) -> Result:
+    """Custom order follows input order; other ties also follow input order.
+
+    lump_sums maps a plan month to a one-time amount added to that month's budget.
+    """
     if strategy not in ('avalanche', 'snowball', 'custom'):
         raise ValueError('unknown strategy')
     budget = number(budget, 'budget')
     if isinstance(max_months, bool) or not isinstance(max_months, int) or max_months < 1:
         raise ValueError('max_months must be a positive integer')
+    lump_sums = {month: number(amount, f'extra payment for month {month}')
+                 for month, amount in (lump_sums or {}).items()}
     # Validate direct callers as strictly as file input.
     debts, errors = parse_debts([asdict(debt) for debt in debts])
     if errors:
@@ -116,7 +121,7 @@ def calculate(debts: list[Debt], budget: Decimal, strategy: str,
         if sum(payments, ZERO) > budget:
             return result('insufficient_budget', month - 1,
                           'Monthly budget cannot cover all required payments.')
-        extra = budget - sum(payments, ZERO)
+        extra = budget + lump_sums.get(month, ZERO) - sum(payments, ZERO)
         order = list(range(len(debts)))
         if strategy == 'avalanche':
             order.sort(key=lambda i: -debts[i].apr)

@@ -18,7 +18,22 @@ def compare(payload: object) -> list[Result]:
     if errors:
         raise ValueError('\n'.join(errors))
     budget = number(payload.get('monthly_budget'), 'Monthly budget')
-    return [calculate(debts, budget, strategy) for strategy in ('avalanche', 'snowball', 'custom')]
+    lumps = lump_sums(payload.get('extra_payments', []))
+    return [calculate(debts, budget, strategy, lump_sums=lumps)
+            for strategy in ('avalanche', 'snowball', 'custom')]
+
+
+def lump_sums(records: object) -> dict[int, Decimal]:
+    """One-time extra payments as [{month, amount}]; amounts in the same month add up."""
+    if not isinstance(records, list) or len(records) > 120:
+        raise ValueError('Provide at most 120 one-time extra payments.')
+    totals: dict[int, Decimal] = {}
+    for record in records:
+        month = record.get('month') if isinstance(record, dict) else None
+        if isinstance(month, bool) or not isinstance(month, int) or not 1 <= month <= 1200:
+            raise ValueError('Each extra payment needs a plan month from 1 to 1200.')
+        totals[month] = totals.get(month, Decimal(0)) + number(record.get('amount'), 'Extra payment')
+    return totals
 
 
 def respond(path: str, body: str) -> tuple[int, str]:
