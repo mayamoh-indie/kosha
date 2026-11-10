@@ -51,7 +51,8 @@ class Handler(BaseHTTPRequestHandler):
         files = {'/': ('index.html', 'text/html; charset=utf-8'),
                  '/app.js': ('app.js', 'text/javascript; charset=utf-8'),
                  '/style.css': ('style.css', 'text/css; charset=utf-8'),
-                 '/tools': ('tools.html', 'text/html; charset=utf-8'),
+                 '/salary': ('salary.html', 'text/html; charset=utf-8'),
+                 '/rrsp': ('rrsp.html', 'text/html; charset=utf-8'),
                  '/tools.js': ('tools.js', 'text/javascript; charset=utf-8')}
         if self.path == '/sample':
             self.respond(200, (ROOT / 'sample-debts.json').read_bytes(), 'application/json')

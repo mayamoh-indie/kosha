@@ -25,9 +25,9 @@ async function run(tool,event) {
     }
   } catch(err) {if(version===revisions[tool]) error.textContent=err.message;}
 }
-for(const tool of ['salary','rrsp']) {
+for(const tool of ['salary','rrsp'].filter(tool=>el(`${tool}-form`))) {
   el(`${tool}-form`).addEventListener('submit',event=>run(tool,event));
   el(`${tool}-form`).addEventListener('input',()=>{revisions[tool]++;el(`${tool}-results`).replaceChildren();el(`${tool}-error`).textContent='Inputs changed. Calculate again to update your estimate.';});
+  run(tool);
 }
-el('mode').addEventListener('change',()=>{el('amount-label').textContent=el('mode').value==='net'?'Target cash received (CAD)':'Gross withdrawal (CAD)';});
-run('salary'); run('rrsp');
+el('mode')?.addEventListener('change',()=>{el('amount-label').textContent=el('mode').value==='net'?'Target cash received (CAD)':'Gross withdrawal (CAD)';});
