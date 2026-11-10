@@ -1,30 +1,17 @@
 """Local-only Kosha dashboard. Run python dashboard.py, then open localhost:8765."""
 
 import json
-from dataclasses import asdict
-from decimal import Decimal
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from payoff import Result, calculate, number, parse_debts
-from tax_tools import tax_request
+from api import respond
 
 ROOT = Path(__file__).parent
 ADDRESS = '127.0.0.1'
 PORT = 8765
-
-
-def compare(payload: object) -> list[Result]:
-    if not isinstance(payload, dict):
-        raise ValueError('Expected an object containing debts and monthly_budget.')
-    records = payload.get('debts')
-    if not isinstance(records, list) or len(records) > 50:
-        raise ValueError('Provide a list of at most 50 debts.')
-    debts, errors = parse_debts(records)
-    if errors:
-        raise ValueError('\n'.join(errors))
-    budget = number(payload.get('monthly_budget'), 'Monthly budget')
-    return [calculate(debts, budget, strategy) for strategy in ('avalanche', 'snowball', 'custom')]
+PAGES = {'index.html', 'salary.html', 'rrsp.html', 'style.css', 'api.js', 'app.js', 'tools.js'}
+TYPES = {'html': 'text/html; charset=utf-8', 'css': 'text/css; charset=utf-8',
+         'js': 'text/javascript; charset=utf-8'}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -48,17 +35,11 @@ class Handler(BaseHTTPRequestHandler):
         if not self.allowed():
             self.respond(403, b'Forbidden', 'text/plain')
             return
-        files = {'/': ('index.html', 'text/html; charset=utf-8'),
-                 '/app.js': ('app.js', 'text/javascript; charset=utf-8'),
-                 '/style.css': ('style.css', 'text/css; charset=utf-8'),
-                 '/salary': ('salary.html', 'text/html; charset=utf-8'),
-                 '/rrsp': ('rrsp.html', 'text/html; charset=utf-8'),
-                 '/tools.js': ('tools.js', 'text/javascript; charset=utf-8')}
-        if self.path == '/sample':
-            self.respond(200, (ROOT / 'sample-debts.json').read_bytes(), 'application/json')
-        elif self.path in files:
-            name, kind = files[self.path]
-            self.respond(200, (ROOT / 'web' / name).read_bytes(), kind)
+        name = 'index.html' if self.path == '/' else self.path[1:]
+        if name == 'sample-debts.json':
+            self.respond(200, (ROOT / name).read_bytes(), 'application/json')
+        elif name in PAGES:
+            self.respond(200, (ROOT / 'web' / name).read_bytes(), TYPES[name.rsplit('.', 1)[1]])
         else:
             self.respond(404, b'Not found', 'text/plain')
 
@@ -75,14 +56,10 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError('Request must contain between 1 and 65,536 bytes.')
             if self.headers.get('Content-Type') != 'application/json':
                 raise ValueError('Send JSON input.')
-            payload: object = json.loads(self.rfile.read(length), parse_float=Decimal)
-            output = ([asdict(result) for result in compare(payload)] if self.path == '/calculate'
-                      else asdict(tax_request(payload, self.path[1:])))
+            status, body = respond(self.path, self.rfile.read(length).decode())
         except (ValueError, UnicodeError) as exc:
-            self.respond(400, json.dumps({'error': str(exc)}).encode(), 'application/json')
-            return
-        body = json.dumps(output, default=str).encode()
-        self.respond(200, body, 'application/json')
+            status, body = 400, json.dumps({'error': str(exc)})
+        self.respond(status, body.encode(), 'application/json')
 
 
 def main() -> None:

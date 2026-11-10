@@ -4,7 +4,8 @@ import unittest
 from http.client import HTTPConnection
 from http.server import ThreadingHTTPServer
 
-from dashboard import Handler, compare
+from api import compare
+from dashboard import Handler
 
 
 class DashboardTests(unittest.TestCase):
@@ -29,11 +30,11 @@ class DashboardTests(unittest.TestCase):
             response = connection.getresponse()
             self.assertEqual(response.status, 200)
             self.assertIn(b'A clearer path', response.read())
-            for path, form in [('/salary', b'salary-form'), ('/rrsp', b'rrsp-form')]:
+            for path, marker in [('/salary.html', b'salary-form'), ('/rrsp.html', b'rrsp-form'), ('/api.js', b'pyodide')]:
                 connection.request('GET', path, headers=headers)
                 response = connection.getresponse()
                 self.assertEqual(response.status, 200)
-                self.assertIn(form, response.read())
+                self.assertIn(marker, response.read())
             connection.request('POST', '/calculate', body=json.dumps({'debts': [], 'monthly_budget': 0}), headers=headers)
             response = connection.getresponse()
             self.assertEqual(response.status, 200)

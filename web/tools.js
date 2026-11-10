@@ -9,11 +9,11 @@ function line(container,label,value,hero=false) {
 async function run(tool,event) {
   if(event) event.preventDefault();
   const version=++revisions[tool], output=el(`${tool}-results`), error=el(`${tool}-error`);
-  output.replaceChildren(); error.textContent='';
+  output.replaceChildren(Object.assign(document.createElement('p'),{className:'muted',textContent:'Calculating…'})); error.textContent='';
   const payload=tool==='salary'?{salary:el('salary').value}:{amount:el('amount').value,mode:el('mode').value};
   try {
-    const response=await fetch('/'+tool,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    const data=await response.json(); if(version!==revisions[tool]) return;
+    const response=await api('/'+tool,payload);
+    const data=response.data; if(version!==revisions[tool]) return; output.replaceChildren();
     if(!response.ok) throw new Error(data.error||'Please check your inputs.');
     if(tool==='salary') {
       line(output,'Estimated monthly take-home',money(data.monthly_net),true);

@@ -4,15 +4,17 @@ Your Financial Assistant. Canadian personal finance tools for money clarity, bud
 
 ## Status
 
-Working local prototype: a dependency-free Python calculation engine with a browser dashboard for debt, salary, and RRSP withdrawal planning.
+Working prototype: a dependency-free Python calculation engine with a browser dashboard for debt, salary, and RRSP withdrawal planning.
 
-## Open the dashboard
+Live site: https://mayamoh-indie.github.io/kosha/ — published from `main` by the Pages workflow after the tests pass. There, the same Python engine runs in the browser through [Pyodide](https://pyodide.org/) (a one-time download of about 10 MB), so entries never leave the page.
+
+## Open the dashboard locally
 
 ```sh
 python dashboard.py
 ```
 
-Open http://127.0.0.1:8765 for the debt planner, /salary for take-home pay, or /rrsp for RRSP withdrawals. Stop with Ctrl+C.
+Open http://127.0.0.1:8765 for the debt planner; the sidebar links to the salary and RRSP pages. Stop with Ctrl+C.
 
 Add/edit/remove debts, compare three strategies, view the balance chart and monthly schedule, and export CSV. Inputs are kept only in the page and reset on refresh. This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in, bank connection, or persistent storage is included.
 

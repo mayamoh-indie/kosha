@@ -31,8 +31,8 @@ async function calculate(event) {
   $('status').textContent = 'Comparing your repayment plans…';
   const debts = rows();
   try {
-    const response = await fetch('/calculate', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({debts,monthly_budget:$('budget').value})});
-    const data = await response.json();
+    const response = await api('/calculate', {debts,monthly_budget:$('budget').value});
+    const data = response.data;
     if (version !== revision) return;
     if (!response.ok) throw new Error(data.error || 'Unable to calculate this plan.');
     snapshot = debts; results = data; selected = 0; shown = 24; render();
@@ -98,7 +98,7 @@ function download() {
 async function loadSample() {
   invalidate(); const version=revision;
   try {
-    const response=await fetch('/sample'); if (!response.ok) throw new Error('Sample data unavailable.');
+    const response=await fetch('sample-debts.json'); if (!response.ok) throw new Error('Sample data unavailable.');
     const sample=await response.json(); if (version!==revision) return;
     $('debts').replaceChildren(); sample.debts.forEach(addDebt); $('budget').value=sample.monthly_budget; await calculate();
   } catch(error) { $('error').textContent=error.message; }
