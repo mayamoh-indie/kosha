@@ -1,0 +1,6 @@
+# Lint settings shared by local runs and the Pipeline's code review stage.
+line-length = 130
+target-version = "py39"
+
+[lint]
+select = ["E", "F", "W", "B", "UP"]

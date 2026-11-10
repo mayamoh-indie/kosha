@@ -6,7 +6,18 @@ Your Financial Assistant. Canadian personal finance tools for money clarity, bud
 
 Working prototype: a dependency-free Python calculation engine with a browser dashboard for debt, salary, and RRSP withdrawal planning.
 
-Live site: https://mayamoh-indie.github.io/kosha/ — GitHub Pages serves `main` as-is (Source: *Deploy from a branch*, `main`, `/ (root)`). `.nojekyll` stops the README from becoming the home page, and the root `index.html` forwards to `web/`. There, the same Python engine runs in the browser through [Pyodide](https://pyodide.org/) (a one-time download of about 10 MB), so entries never leave the page. The Tests workflow runs the test suite on every push and pull request.
+Live site: https://mayamoh-indie.github.io/kosha/ — the forwarding `index.html` opens `web/`, where the same Python engine runs in the browser through [Pyodide](https://pyodide.org/) (a one-time download of about 10 MB), so entries never leave the page.
+
+## Pipeline
+
+[`.github/workflows/pipeline.yml`](.github/workflows/pipeline.yml) runs on every push and pull request. See each run as a stage graph in the Actions tab:
+
+1. **Test**: the unit test suite.
+2. **Code review**, two jobs in parallel: Ruff lint for Python (settings in `ruff.toml`) plus a JavaScript syntax check, and a CodeQL security scan that fails on any finding.
+3. **Build**: collects the site files (`web/`, the engine modules, sample data).
+4. **Deploy**: on `main` only, after every stage passes, publishes to the `gh-pages` branch. GitHub Pages serves that branch (Settings → Pages → Deploy from a branch → `gh-pages`, `/ (root)`).
+
+Pull requests stop after Build, so problems show before merging. To lint locally: `pip install ruff==0.17.4 && ruff check .`
 
 ## Open the dashboard locally
 

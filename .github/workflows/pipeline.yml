@@ -1,0 +1,125 @@
+name: Pipeline
+
+# Test → code review (lint + CodeQL) → build → deploy.
+# Pull requests run every stage except deploy; only main is published, and only after every stage passes.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: 1 · Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run unit tests
+        shell: bash
+        run: |
+          python -m unittest -v 2>&1 | tee test-output.txt
+      - name: Summary
+        if: always()
+        shell: bash
+        run: |
+          echo "### Tests: $(tail -n 3 test-output.txt | tr '\n' ' ')" >> "$GITHUB_STEP_SUMMARY"
+
+  lint:
+    name: 2 · Code review · Lint
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Lint Python (ruff.toml)
+        run: |
+          pip install ruff==0.17.4
+          ruff check --output-format=github .
+      - name: Check JavaScript syntax
+        run: |
+          for file in web/*.js; do node --check "$file"; done
+      - name: Summary
+        run: |
+          echo "### Lint passed: Python (Ruff) and JavaScript syntax" >> "$GITHUB_STEP_SUMMARY"
+
+  security:
+    name: 2 · Code review · CodeQL
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: python, javascript-typescript
+      - uses: github/codeql-action/analyze@v3
+        with:
+          output: codeql-results
+      # CodeQL only reports alerts; fail this stage so findings block the deploy.
+      - name: Block on findings
+        shell: bash
+        run: |
+          count=$(jq -s '[.[].runs[].results[]] | length' codeql-results/*.sarif)
+          echo "### CodeQL findings: $count" >> "$GITHUB_STEP_SUMMARY"
+          jq -r '.runs[].results[] | "- \(.ruleId): \(.message.text) (\(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine))"' \
+            codeql-results/*.sarif >> "$GITHUB_STEP_SUMMARY"
+          test "$count" -eq 0
+
+  build:
+    name: 3 · Build site
+    needs: [lint, security]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect site files
+        run: |
+          mkdir _site
+          cp -r web index.html .nojekyll api.py payoff.py tax_tools.py sample-debts.json _site/
+          echo "### Site files: $(find _site -type f | wc -l)" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: _site
+          include-hidden-files: true
+
+  deploy:
+    name: 4 · Deploy
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    environment:
+      name: production
+      url: https://mayamoh-indie.github.io/kosha/
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: _site
+      - name: Publish to gh-pages branch
+        working-directory: _site
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy ${GITHUB_SHA}"
+          git push -q -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+          echo "### Deployed ${GITHUB_SHA::7} to gh-pages" >> "$GITHUB_STEP_SUMMARY"
