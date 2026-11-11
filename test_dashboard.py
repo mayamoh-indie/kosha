@@ -56,6 +56,7 @@ class DashboardTests(unittest.TestCase):
             pages = [('/planner.html', b'A clearer path'), ('/debts.html', b'debt-list'), ('/strategy.html', b'priorities'),
                      ('/finance.html', b'entry-form'), ('/finance-data.js', b'financeTotals'),
                      ('/growth.html', b'growth-form'), ('/growth-data.js', b'projectGrowth'),
+                     ('/whatif-data.js', b'whatIfBudget'), ('/strategy.js', b'runWhatIf'),
                      ('/plan.html', b'steps'), ('/track.html', b'upcoming'), ('/store.js', b'kosha-plan'),
                      ('/expenses.html', b'expense-form'), ('/expense-data.js', b'kosha-expenses'),
                      ('/expenses.js', b'makeExpense'),
