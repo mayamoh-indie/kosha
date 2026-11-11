@@ -16,6 +16,7 @@ Your financial assistant for money clarity, budgeting and debt payoff. Built for
 | **Expenses and budgets** | Log expenses by date and category, compare monthly spending and see category budgets against logged expenses. |
 | **Home (money overview)** | Record asset accounts, received income and savings goals; view accessible cash and net worth from entered balances. |
 | **Yearly and irregular bills** | Earmark money, see a monthly reserve and progress, and flag bills due within 30 days. Confirm payment to start the next yearly cycle. |
+| **Savings & investment growth** | Project savings with weekly to annual deposits, selectable compounding and timing, fees, simplified tax drag and inflation. Compare total invested with growth and see today’s-dollar values. |
 | **RRSP growth** | Explore contributions, assumed returns, fees and inflation with a chart and annual table. An optional room check covers the first 12 months or a shorter scenario. |
 | **Ontario salary estimate** | Estimate annualized 2026 take-home pay, with income tax, CPP and EI broken out. |
 | **RRSP withdrawal estimate** | See withholding and net proceeds, or estimate the smallest gross withdrawal for a target net amount. |
@@ -34,6 +35,7 @@ All figures are estimates. Debt projections assume fixed rates and minimums, wit
 
 - [Start a debt plan and explore a spending change](docs/how-to/start-debt-plan.md)
 - [Plan a yearly bill using savings goals](docs/how-to/plan-bills.md)
+- [Explore savings and investment growth](docs/how-to/project-savings.md)
 - [Run locally, use the command line, and run checks](docs/how-to/run-and-check.md)
 - [Project folders](docs/how-to/run-and-check.md#folder-map)
 - [Product direction, build principles and design references](docs/reference/project-notes.md)
