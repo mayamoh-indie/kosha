@@ -63,7 +63,8 @@ class DashboardTests(unittest.TestCase):
                      ('/plan.html', b'steps'), ('/track.html', b'upcoming'), ('/store.js', b'kosha-plan'),
                      ('/expenses.html', b'expense-form'), ('/expense-data.js', b'kosha-expenses'),
                      ('/expenses.js', b'makeExpense'),
-                     ('/salary.html', b'salary-form'), ('/rrsp.html', b'rrsp-form'), ('/api.js', b'pyodide')]
+                     ('/salary.html', b'salary-form'), ('/rrsp.html', b'rrsp-form'), ('/api.js', b'engine-worker.js'),
+                     ('/engine-worker.js', b'pyodide')]
             for path, marker in pages:
                 connection.request('GET', path, headers=headers)
                 response = connection.getresponse()
