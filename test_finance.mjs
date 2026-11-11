@@ -4,7 +4,36 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 const context=vm.createContext({});
 vm.runInContext(`const monthKey=date=>date.toISOString().slice(0,7);\n${readFileSync('web/expense-data.js','utf8')}\n${readFileSync('web/finance-data.js','utf8')}\n${readFileSync('web/growth-data.js','utf8')}`,context);
-const {financeRecord,financeTotals,financeAmount,projectGrowth}=context;
+const {financeRecord,financeTotals,financeAmount,goalStatus,nextBillCycle,projectGrowth}=context;
+test('a bill is a flagged goal and plain goals stay unflagged',()=>{
+  const values={name:'Car insurance',date:'2027-05-10',amount:'1200',saved:'300'};
+  assert.equal(financeRecord('goals',{...values,bill:'on'},'id').bill,true);
+  assert.equal(financeRecord('goals',{...values,bill:true},'id').bill,true);
+  for(const bill of [undefined,false,'yes',1])assert.equal('bill' in financeRecord('goals',{...values,bill},'id'),false);
+  assert.throws(()=>financeRecord('goals',{...values,bill:'on',date:'2027-02-30'},'id'));
+});
+test('bill status gives the monthly reserve and the due-soon window',()=>{
+  const bill={bill:true,date:'2027-05-10',cents:120000,saved:30000};
+  const status=goalStatus(bill,'2026-11-11');
+  assert.equal(status.remaining,90000);assert.equal(status.months,6);assert.equal(status.monthly,15000);assert.equal(status.due,null);
+  assert.equal(goalStatus(bill,'2027-04-09').due,null);
+  assert.equal(goalStatus(bill,'2027-04-10').due,'soon');
+  assert.equal(goalStatus(bill,'2027-05-10').due,'soon');
+  assert.equal(goalStatus(bill,'2027-05-11').due,'past');
+  assert.equal(goalStatus({...bill,saved:120000},'2027-05-01').due,'soon');
+  assert.equal(goalStatus({...bill,bill:undefined},'2027-05-01').due,null);
+  assert.equal(goalStatus({...bill,saved:200000},'2026-11-11').remaining,0);
+  const late=goalStatus(bill,'2027-05-02');assert.equal(late.months,0);assert.equal(late.monthly,90000);
+  assert.equal(goalStatus({...bill,cents:100000,saved:0},'2027-02-10').monthly,33334);
+});
+test('marking a bill paid moves it one year on and clears the earmark only',()=>{
+  const bill={id:'a',name:'Car insurance',bill:true,date:'2027-05-10',cents:120000,saved:120000};
+  assert.deepEqual({...nextBillCycle(bill)},{...bill,date:'2028-05-10',saved:0});
+  assert.equal(bill.saved,120000);
+  assert.equal(nextBillCycle({...bill,date:'2028-02-29'}).date,'2029-02-28');
+  assert.equal(nextBillCycle({...bill,date:'2027-02-28'}).date,'2028-02-28');
+  assert.throws(()=>nextBillCycle({...bill,date:'9999-05-10'}));
+});
 test('account snapshots and goals do not double count assets',()=>{
   const data={accounts:[{type:'Savings',cents:100000},{type:'RRSP',cents:50000}],income:[{date:'2026-11-01',cents:20000}],goals:[{saved:50000}]};
   const totals=financeTotals(data,[{date:'2026-11-02',cents:1000}],[{balance:'200'}],'2026-11');
