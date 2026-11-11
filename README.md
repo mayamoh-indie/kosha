@@ -15,6 +15,7 @@ Your financial assistant for money clarity, budgeting and debt payoff. Built for
 | **Payment tracking** | View past-due and upcoming debt payments in a calendar and mark them paid. Update balances separately from statements. |
 | **Expenses and budgets** | Log expenses by date and category, compare monthly spending and see category budgets against logged expenses. |
 | **Home (money overview)** | Record asset accounts, received income and savings goals; view accessible cash and net worth from entered balances. |
+| **Investment account tracking** | Group registered and non-registered accounts, update dated CAD balances, record contribution totals, and log dated contributions and withdrawals without double-counting assets. |
 | **Yearly and irregular bills** | Earmark money, see a monthly reserve and progress, and flag bills due within 30 days. Confirm payment to start the next yearly cycle. |
 | **Savings & investment growth** | Project savings with weekly to annual deposits, selectable compounding and timing, fees, simplified tax drag and inflation. Compare total invested with growth and see today’s-dollar values. |
 | **RRSP growth** | Explore contributions, assumed returns, fees and inflation with a chart and annual table. An optional room check covers the first 12 months or a shorter scenario. |
@@ -36,6 +37,7 @@ All figures are estimates. Debt projections assume fixed rates and minimums, wit
 - [Start a debt plan and explore a spending change](docs/how-to/start-debt-plan.md)
 - [Plan a yearly bill using savings goals](docs/how-to/plan-bills.md)
 - [Explore savings and investment growth](docs/how-to/project-savings.md)
+- [Track registered and non-registered investments](docs/how-to/track-investments.md)
 - [Run locally, use the command line, and run checks](docs/how-to/run-and-check.md)
 - [Project folders](docs/how-to/run-and-check.md#folder-map)
 - [Product direction, build principles and design references](docs/reference/project-notes.md)
