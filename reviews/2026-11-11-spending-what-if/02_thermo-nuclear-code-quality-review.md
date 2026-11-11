@@ -12,7 +12,7 @@ Approve. No structural regression. Two notes, both left as they are with reasons
 
 The obvious heavy version of this feature would add a what-if mode to the engine or a new endpoint. This change adds neither. A spending change is modelled as what it is in this app, a different monthly debt budget, so the preview is one more call to `calculatePlan` with one field changed, and applying it is one assignment into the existing budget input. `api.py`, `payoff.py` and `store.js` are untouched.
 
-The rules sit in `web/whatif-data.js` (38 lines, no page code), following the `expense-data.js` and `finance-data.js` split, so they are tested without a browser. It reuses `financeAmount`, `isCategory`, `expensesIn`, `sumCents`, `monthKey` and `readStore` instead of writing new versions.
+The rules sit in `web/whatif-data.js` (37 lines, no page code), following the `expense-data.js` and `finance-data.js` split, so they are tested without a browser. It reuses `financeAmount`, `isCategory`, `expensesIn`, `sumCents`, `monthKey` and `readStore` instead of writing new versions.
 
 ## Note: `runWhatIf` calculates and renders in one function
 
@@ -24,7 +24,7 @@ The rules sit in `web/whatif-data.js` (38 lines, no page code), following the `e
 
 ## Size and layering
 
-- `web/strategy.js` grows from 110 to 152 lines.
+- `web/strategy.js` grows from 114 to 152 lines.
 - No file approaches 1,000 lines.
 - `el` is added to `strategy.js` in the same form `plan.js`, `track.js` and `expenses.js` already use. The per-page copy of this helper is an existing convention, not something this PR introduces.
 - No new conditionals are added to `update`, `render` or `drawPayments`.
