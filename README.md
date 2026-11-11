@@ -14,7 +14,7 @@ Your financial assistant for money clarity, budgeting and debt payoff. Built for
 | **Extra payments and payoff steps** | Add one-time extra payments, choose a monthly payment day and follow a plan that rolls freed payments into remaining debts. |
 | **Payment tracking** | View past-due and upcoming debt payments in a calendar and mark them paid. Update balances separately from statements. |
 | **Expenses and budgets** | Log expenses by date and category, compare monthly spending and see category budgets against logged expenses. |
-| **Money overview** | Record asset accounts, received income and savings goals; view accessible cash and net worth from entered balances. |
+| **Home (money overview)** | Record asset accounts, received income and savings goals; view accessible cash and net worth from entered balances. |
 | **Yearly and irregular bills** | Earmark money, see a monthly reserve and progress, and flag bills due within 30 days. Confirm payment to start the next yearly cycle. |
 | **RRSP growth** | Explore contributions, assumed returns, fees and inflation with a chart and annual table. An optional room check covers the first 12 months or a shorter scenario. |
 | **Ontario salary estimate** | Estimate annualized 2026 take-home pay, with income tax, CPP and EI broken out. |

@@ -21,7 +21,7 @@ function whatIfOutcome(current, changed) {
     interestCents: Math.round((Number(current.interest) - Number(changed.interest)) * 100)};
 }
 
-// Category budgets saved by Money overview. Stored data is untrusted, so only well-formed ones are used.
+// Category budgets saved on the Home page. Stored data is untrusted, so only well-formed ones are used.
 function savedBudgets() {
   const stored = readStore(FINANCE_KEY), list = stored && Array.isArray(stored.budgets) ? stored.budgets : [];
   return list.filter(item => item !== null && typeof item === 'object' && typeof item.month === 'string'

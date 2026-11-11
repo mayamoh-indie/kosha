@@ -23,6 +23,18 @@ class DashboardTests(unittest.TestCase):
             self.assertIn('<script src="menu.js" defer></script>', html, page.name)  # the phone menu button
         self.assertEqual(expected[0], './')
 
+    def test_debt_pages_link_to_each_other_in_the_same_order(self):
+        pages = {}
+        for page in sorted((ROOT / 'web').glob('*.html')):
+            section = re.search(r'<nav class="subnav".*?</nav>', page.read_text(encoding='utf-8'))
+            if section:
+                pages[page.name] = re.findall(r'<a href="([^"]+)"( aria-current="page")?', section.group(0))
+        order = [href for href, _ in pages['debts.html']]
+        self.assertEqual(sorted(order), sorted(pages))  # every debt page is linked, and only those
+        for name, links in pages.items():
+            self.assertEqual([href for href, _ in links], order, name)
+            self.assertEqual([href for href, current in links if current], [name])
+
     def test_every_page_applies_the_theme_before_it_paints(self):
         for page in sorted((ROOT / 'web').glob('*.html')):
             head = page.read_text(encoding='utf-8').split('</head>')[0]
@@ -71,10 +83,10 @@ class DashboardTests(unittest.TestCase):
             self.assertEqual(response.status, 200)
             self.assertIn(THEME_HASH, response.getheader('Content-Security-Policy'))
             self.assertNotIn("'unsafe-inline'", response.getheader('Content-Security-Policy'))
-            self.assertIn(b'Payoff progress', response.read())
+            self.assertIn(b'entry-form', response.read())
             pages = [('/data/sample-debts.json', b'monthly_budget'),
-                     ('/planner.html', b'A clearer path'), ('/debts.html', b'debt-list'), ('/strategy.html', b'priorities'),
-                     ('/finance.html', b'entry-form'), ('/finance-data.js', b'financeTotals'),
+                     ('/planner.html', b'A clearer path'), ('/debts.html', b'Payoff progress'), ('/debt-list.html', b'debt-list'), ('/strategy.html', b'priorities'),
+                     ('/finance.js', b'loadFinance'), ('/finance-data.js', b'financeTotals'),
                      ('/growth.html', b'growth-form'), ('/growth-data.js', b'projectGrowth'),
                      ('/whatif-data.js', b'whatIfBudget'), ('/strategy.js', b'runWhatIf'), ('/theme.js', b'kosha-theme'),
                      ('/menu.js', b'menu-open'),
