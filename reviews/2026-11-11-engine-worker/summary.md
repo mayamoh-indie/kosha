@@ -24,3 +24,7 @@ Ship. There are no security or correctness findings and no structural findings. 
 - Not available locally: Ruff (not installed) and CodeQL. Both run in the pipeline.
 - Not checked: Firefox and Safari. Module workers need Firefox 114+ and Safari 15+. `engine-worker.js` itself has no unit test; it was exercised only in Chrome. A fresh PageSpeed run is pending until after deploy.
 - PR discussion: no comments or bot reviews when this review was written.
+
+## Re-validation after merging `main` again
+
+`main` moved to `35be5c9` (phone slide-out menu, PR #5) after the review, and PR #6 conflicted in the `PAGES` list. Merge commit `b883d4a9175c1bd14eaf260d912dda62b00de34f` keeps both additions (`menu.js`, `engine-worker.js`). Against `22abd42`, the reviewed files (`web/api.js`, `web/engine-worker.js`, `test_api.mjs`) have no diff. The only change in this PR's other files is that one `PAGES` line, plus `test_dashboard.py` lines that come from `main`. The findings above still apply. Local checks on `b883d4a` passed: 24 Python tests, 17 JS tests and `node --check` on all `web/*.js`.
