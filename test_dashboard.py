@@ -24,6 +24,11 @@ class DashboardTests(unittest.TestCase):
             self.assertEqual(mobile, expected, page.name)
         self.assertEqual(expected[0], './')
 
+    def test_every_page_applies_the_theme_before_it_paints(self):
+        for page in sorted((ROOT / 'web').glob('*.html')):
+            head = page.read_text(encoding='utf-8').split('</head>')[0]
+            self.assertIn('<script src="theme.js"></script>', head, page.name)  # no defer: avoids a light flash
+
     def test_comparison_uses_existing_engine(self):
         results = compare({'debts': [{'name': 'Card', 'balance': '100', 'apr': '12', 'minimum': '10'}], 'monthly_budget': '60'})
         self.assertEqual(len(results), 3)
@@ -56,6 +61,7 @@ class DashboardTests(unittest.TestCase):
             pages = [('/planner.html', b'A clearer path'), ('/debts.html', b'debt-list'), ('/strategy.html', b'priorities'),
                      ('/finance.html', b'entry-form'), ('/finance-data.js', b'financeTotals'),
                      ('/growth.html', b'growth-form'), ('/growth-data.js', b'projectGrowth'),
+                     ('/whatif-data.js', b'whatIfBudget'), ('/strategy.js', b'runWhatIf'), ('/theme.js', b'kosha-theme'),
                      ('/plan.html', b'steps'), ('/track.html', b'upcoming'), ('/store.js', b'kosha-plan'),
                      ('/expenses.html', b'expense-form'), ('/expense-data.js', b'kosha-expenses'),
                      ('/expenses.js', b'makeExpense'),
