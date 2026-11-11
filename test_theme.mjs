@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const web = new URL('web/', import.meta.url);
 const html = readFileSync(new URL('index.html', web), 'utf8');
-const bootstrap = html.match(/<script>(.*?)<\/script>/s)[1];
+const bootstrap = html.match(/<script>(.*?)<\/script>/is)[1];
 
 function load(saved, systemDark, blocked = false) {
   const header = {append(button) { this.button = button; }};
