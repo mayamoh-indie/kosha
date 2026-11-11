@@ -1,3 +1,5 @@
+import base64
+import hashlib
 import json
 import re
 import threading
@@ -6,7 +8,7 @@ from http.client import HTTPConnection
 from http.server import ThreadingHTTPServer
 
 from api import compare
-from dashboard import ROOT, Handler
+from dashboard import ROOT, THEME_HASH, Handler
 
 
 class DashboardTests(unittest.TestCase):
@@ -24,7 +26,11 @@ class DashboardTests(unittest.TestCase):
     def test_every_page_applies_the_theme_before_it_paints(self):
         for page in sorted((ROOT / 'web').glob('*.html')):
             head = page.read_text(encoding='utf-8').split('</head>')[0]
-            self.assertIn('<script src="theme.js"></script>', head, page.name)  # no defer: avoids a light flash
+            self.assertIn('<script src="theme.js" defer></script>', head, page.name)
+            bootstrap = re.search(r'<script>(.*?)</script>', head, flags=re.IGNORECASE | re.DOTALL).group(1)
+            digest = base64.b64encode(hashlib.sha256(bootstrap.encode()).digest()).decode()
+            self.assertEqual(f'sha256-{digest}', THEME_HASH, page.name)
+            self.assertLess(head.index('<script>'), head.index('href="style.css"'), page.name)
 
     def test_every_page_has_its_own_search_description(self):
         descriptions = {}
@@ -63,6 +69,8 @@ class DashboardTests(unittest.TestCase):
             connection.request('GET', '/', headers=headers)
             response = connection.getresponse()
             self.assertEqual(response.status, 200)
+            self.assertIn(THEME_HASH, response.getheader('Content-Security-Policy'))
+            self.assertNotIn("'unsafe-inline'", response.getheader('Content-Security-Policy'))
             self.assertIn(b'Payoff progress', response.read())
             pages = [('/planner.html', b'A clearer path'), ('/debts.html', b'debt-list'), ('/strategy.html', b'priorities'),
                      ('/finance.html', b'entry-form'), ('/finance-data.js', b'financeTotals'),
