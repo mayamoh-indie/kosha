@@ -12,7 +12,7 @@ Live site: https://mayamoh-indie.github.io/kosha/ — the forwarding `index.html
 
 [`.github/workflows/pipeline.yml`](.github/workflows/pipeline.yml) runs on every push and pull request. See each run as a stage graph in the Actions tab:
 
-1. **Test**: the unit test suite.
+1. **Test**: the Python unit tests and the JavaScript expense tests.
 2. **Code review**, two jobs in parallel: Ruff lint for Python (settings in `ruff.toml`) plus a JavaScript syntax check, and a CodeQL security scan that fails on any finding.
 3. **Build**: collects the site files (`web/`, the engine modules, sample data).
 4. **Deploy**: on `main` only, after every stage passes, publishes to the `gh-pages` branch. GitHub Pages serves that branch (Settings → Pages → Deploy from a branch → `gh-pages`, `/ (root)`).
@@ -37,7 +37,7 @@ Open http://127.0.0.1:8765. Stop with Ctrl+C. The sidebar links to:
 
 Dates come from the plan's start month: submitting balances makes this month month 0, and month 1 is next month. Payments fall on the chosen pay day (1–28). Progress uses each debt's optional original amount; without it, that debt counts as 0% paid. Each debt has a category; older saved plans default to Other.
 
-Until you edit the fictional sample, pages show it. Your plan, payment records and expenses are saved in this browser's local storage only (never sent anywhere) and the plan and payments can be cleared from Home (delete expenses one by one on Expenses). This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in or bank connection is included.
+Until you edit the fictional sample, pages show it. Your plan, payment records and expenses are saved in this browser's local storage only (never sent anywhere) and the plan and payments can be cleared from Home (delete expenses one by one on Expenses). Saved expenses that can't be read are hidden and kept, never deleted. This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in or bank connection is included.
 
 The salary tool estimates 2026 Ontario annualized take-home pay. The RRSP tool calculates gross-to-net withholding and the minimum gross withdrawal for a target net amount. See [tax assumptions and official sources](TAX_ASSUMPTIONS.md) for scope and exclusions.
 
@@ -50,6 +50,7 @@ python payoff.py sample-debts.json
 python payoff.py sample-debts.json --budget 800 --strategy avalanche
 python payoff.py sample-debts.json --json
 python -m unittest -v
+node --test test_expenses.mjs   # expense rules; needs Node 18 or newer
 ```
 
 Input is a JSON object with `monthly_budget` and a `debts` array. Each debt needs a unique `name`, `balance`, `apr` (annual percentage, e.g. 20.99), and `minimum` monthly payment. Numbers and numeric strings are accepted. Amounts must be non-negative with at most two decimal places. APR must be between 0 and 100. Positive balances require positive minimums. Missing, null, non-finite, or invalid values are rejected, with errors listed per record; no incomplete portfolio is simulated. An empty debt list is already paid off.

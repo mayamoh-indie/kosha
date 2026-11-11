@@ -9,7 +9,9 @@ const CATEGORIES = {
   other: {label: 'Other', color: '#8aa7ad', icon: '<circle cx="12" cy="12" r="9"/><path d="M12 6v12M15 9.5c0-1.4-1.3-2-3-2s-3 .7-3 2 1.3 1.8 3 2.2 3 .9 3 2.3-1.3 2-3 2-3-.6-3-2"/>'},
 };
 const categoryOf = debt => CATEGORIES[debt.category] ? debt.category : 'other';
-const iconSvg = key => `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${CATEGORIES[key].icon}</svg>`;
+// Takes fixed icon markup only, such as a category's `icon`; never pass user input.
+const svgIcon = markup => `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${markup}</svg>`;
+const iconSvg = key => svgIcon(CATEGORIES[key].icon);
 const PALETTE = ['#0f3440', '#397d70', '#3d7fa3', '#69a8a9', '#1a4f61', '#a8d5e2', '#5b7d9e', '#8aa7ad'];
 
 // Progress card with icon, status, optional detail line, balance tag, and progress bar.

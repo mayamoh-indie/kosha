@@ -28,6 +28,10 @@ jobs:
         shell: bash
         run: |
           python -m unittest -v 2>&1 | tee test-output.txt
+      - name: Run JavaScript tests
+        shell: bash
+        run: |
+          node --test test_expenses.mjs
       - name: Summary
         if: always()
         shell: bash

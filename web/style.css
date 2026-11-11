@@ -78,3 +78,4 @@ select{display:block;width:100%;padding:9px 10px;background:white;border:1px sol
 .spend-label{display:flex;align-items:center;gap:10px;color:#0f3440}.spend-label .pay-icon{width:30px;height:30px}
 .spend-row .bar{margin:8px 0 0;background:color-mix(in srgb,var(--c) 15%,white)}.spend-row .bar span{width:var(--p);background:var(--c)}
 @media(max-width:600px){.expense-form{grid-template-columns:1fr}.pay-row .pay-amount{grid-column:3}}
+#unreadable:empty{display:none}
