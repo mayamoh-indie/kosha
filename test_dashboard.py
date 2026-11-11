@@ -11,17 +11,14 @@ from dashboard import ROOT, Handler
 
 class DashboardTests(unittest.TestCase):
     def test_every_page_lists_navigation_in_the_same_order(self):
-        def links(html, pattern):
-            return re.findall(r'<a [^>]*href="([^"]+)"', re.search(pattern, html).group(0))
-
         expected = None
         for page in sorted((ROOT / 'web').glob('*.html')):
             html = page.read_text(encoding='utf-8')
-            sidebar = links(html, r'<aside class="sidebar">.*?</aside>')[1:]  # skip the brand link
-            mobile = links(html, r'<nav class="mobile-nav">.*?</nav>')
+            menu = re.search(r'<aside class="sidebar">.*?</aside>', html).group(0)
+            sidebar = re.findall(r'<a [^>]*href="([^"]+)"', menu)[1:]  # skip the brand link
             expected = expected or sidebar
             self.assertEqual(sidebar, expected, page.name)
-            self.assertEqual(mobile, expected, page.name)
+            self.assertIn('<script src="menu.js" defer></script>', html, page.name)  # the phone menu button
         self.assertEqual(expected[0], './')
 
     def test_every_page_applies_the_theme_before_it_paints(self):
@@ -62,6 +59,7 @@ class DashboardTests(unittest.TestCase):
                      ('/finance.html', b'entry-form'), ('/finance-data.js', b'financeTotals'),
                      ('/growth.html', b'growth-form'), ('/growth-data.js', b'projectGrowth'),
                      ('/whatif-data.js', b'whatIfBudget'), ('/strategy.js', b'runWhatIf'), ('/theme.js', b'kosha-theme'),
+                     ('/menu.js', b'menu-open'),
                      ('/plan.html', b'steps'), ('/track.html', b'upcoming'), ('/store.js', b'kosha-plan'),
                      ('/expenses.html', b'expense-form'), ('/expense-data.js', b'kosha-expenses'),
                      ('/expenses.js', b'makeExpense'),
