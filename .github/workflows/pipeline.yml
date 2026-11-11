@@ -31,7 +31,7 @@ jobs:
       - name: Run JavaScript tests
         shell: bash
         run: |
-          node --test test_expenses.mjs test_finance.mjs test_whatif.mjs test_api.mjs test_theme.mjs
+          node --test tests/*.mjs
       - name: Summary
         if: always()
         shell: bash
@@ -92,8 +92,9 @@ jobs:
       - uses: actions/checkout@v5
       - name: Collect site files
         run: |
-          mkdir _site
-          cp -r web index.html .nojekyll api.py payoff.py tax_tools.py sample-debts.json _site/
+          mkdir -p _site/app
+          cp -r web data index.html .nojekyll _site/
+          cp app/__init__.py app/api.py app/payoff.py app/tax_tools.py _site/app/
           echo "### Site files: $(find _site -type f | wc -l)" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v5
         with:

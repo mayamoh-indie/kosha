@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import test from 'node:test';
 import vm from 'node:vm';
 
-const web = new URL('web/', import.meta.url);
+const web = new URL('../web/', import.meta.url);
 const html = readFileSync(new URL('index.html', web), 'utf8');
 const bootstrap = html.match(/<script>(.*?)<\/script>/is)[1];
 
@@ -31,7 +31,7 @@ function load(saved, systemDark, blocked = false) {
 
 test('every page applies the same authorized bootstrap before CSS and defers theme.js', () => {
   const hash = 'sha256-' + createHash('sha256').update(bootstrap).digest('base64');
-  assert.ok(readFileSync(new URL('dashboard.py', import.meta.url), 'utf8').includes(hash));
+  assert.ok(readFileSync(new URL('../app/dashboard.py', import.meta.url), 'utf8').includes(hash));
   for (const file of readdirSync(web).filter(file => file.endsWith('.html'))) {
     const head = readFileSync(new URL(file, web), 'utf8').split('</head>')[0];
     assert.equal(head.match(/<script>(.*?)<\/script>/is)[1], bootstrap, file);

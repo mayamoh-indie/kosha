@@ -36,7 +36,7 @@ const withDefaults = plan => ({strategy: 0, pay_day: 1, extra_payments: [], star
 async function loadPlan() {
   const saved = readStore(PLAN_KEY);
   if (saved) return {plan: withDefaults(saved), sample: false};
-  const response = await fetch(REPO_ROOT + 'sample-debts.json');
+  const response = await fetch(REPO_ROOT + 'data/sample-debts.json');
   if (!response.ok) throw new Error('Sample data unavailable.');
   return {plan: withDefaults(await response.json()), sample: true};
 }

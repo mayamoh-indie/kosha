@@ -11,7 +11,7 @@ function load(finances) {
     removeItem: key => store.delete(key)};
   const context = vm.createContext({localStorage});
   for (const file of ['store.js', 'expense-data.js', 'finance-data.js', 'whatif-data.js']) {
-    vm.runInContext(readFileSync(new URL(`web/${file}`, import.meta.url), 'utf8'), context);
+    vm.runInContext(readFileSync(new URL(`../web/${file}`, import.meta.url), 'utf8'), context);
   }
   return code => vm.runInContext(code, context);
 }

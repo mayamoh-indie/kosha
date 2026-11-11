@@ -111,7 +111,7 @@ function loadSaved() {
 async function loadSample() {
   persist = false; invalidate(); const version=revision;
   try {
-    const response=await fetch(REPO_ROOT + 'sample-debts.json'); if (!response.ok) throw new Error('Sample data unavailable.');
+    const response=await fetch(REPO_ROOT + 'data/sample-debts.json'); if (!response.ok) throw new Error('Sample data unavailable.');
     const sample=await response.json(); if (version!==revision) return;
     $('debts').replaceChildren(); sample.debts.forEach(addDebt); $('budget').value=sample.monthly_budget; await calculate();
   } catch(error) { $('error').textContent=error.message; }

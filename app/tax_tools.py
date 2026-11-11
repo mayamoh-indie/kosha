@@ -1,13 +1,13 @@
 """Ontario 2026 annualized payroll estimates and ordinary RRSP withholding.
 
-Source links and exclusions are recorded in TAX_ASSUMPTIONS.md.
+Source links and exclusions are recorded in docs/reference/tax-assumptions.md.
 """
 
 from dataclasses import dataclass
 from decimal import Decimal, ROUND_CEILING, ROUND_HALF_UP
 from typing import Union
 
-from payoff import CENT, ZERO, number
+from .payoff import CENT, ZERO, number
 
 D = Decimal
 FEDERAL = [(D('58523'), D('.14')), (D('117045'), D('.205')),

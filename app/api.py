@@ -4,8 +4,8 @@ import json
 from dataclasses import asdict
 from decimal import Decimal
 
-from payoff import Result, calculate, number, parse_debts
-from tax_tools import tax_request
+from .payoff import Result, calculate, number, parse_debts
+from .tax_tools import tax_request
 
 
 def compare(payload: object) -> list[Result]:
