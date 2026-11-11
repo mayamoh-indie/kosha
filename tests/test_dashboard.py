@@ -85,7 +85,8 @@ class DashboardTests(unittest.TestCase):
             self.assertNotIn("'unsafe-inline'", response.getheader('Content-Security-Policy'))
             self.assertIn(b'entry-form', response.read())
             pages = [('/data/sample-debts.json', b'monthly_budget'),
-                     ('/planner.html', b'A clearer path'), ('/debts.html', b'Payoff progress'), ('/debt-list.html', b'debt-list'), ('/strategy.html', b'priorities'),
+                     ('/planner.html', b'A clearer path'), ('/debts.html', b'Payoff progress'),
+                     ('/debt-list.html', b'debt-list'), ('/strategy.html', b'priorities'),
                      ('/finance.js', b'loadFinance'), ('/finance-data.js', b'financeTotals'),
                      ('/growth.html', b'growth-form'), ('/growth-data.js', b'projectGrowth'),
                      ('/whatif-data.js', b'whatIfBudget'), ('/strategy.js', b'runWhatIf'), ('/theme.js', b'kosha-theme'),
