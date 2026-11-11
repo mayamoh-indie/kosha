@@ -9,6 +9,8 @@ from api import respond
 ROOT = Path(__file__).parent
 ADDRESS = '127.0.0.1'
 PORT = 8765
+# Authorize only the exact inline theme bootstrap; tests check every page against this hash.
+THEME_HASH = 'sha256-tSXi1pIjVYnybZEjpMoMUVqQzAiepX1PlmI6XKoyXB8='
 PAGES = ['index.html', 'debts.html', 'planner.html', 'strategy.html', 'plan.html', 'track.html', 'expenses.html',
          'salary.html', 'rrsp.html', 'style.css', 'api.js', 'categories.js', 'store.js', 'home.js',
          'debts.js', 'app.js', 'strategy.js', 'plan.js', 'track.js', 'tools.js', 'expense-data.js', 'expenses.js',
@@ -30,7 +32,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Content-Security-Policy',
-                         "default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'")
+                         f"default-src 'self'; script-src 'self' '{THEME_HASH}'; style-src 'self'; frame-ancestors 'none'")
         self.end_headers()
         self.wfile.write(body)
 
