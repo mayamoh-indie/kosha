@@ -34,7 +34,7 @@ test('every page applies the same authorized bootstrap before CSS and defers the
   assert.ok(readFileSync(new URL('dashboard.py', import.meta.url), 'utf8').includes(hash));
   for (const file of readdirSync(web).filter(file => file.endsWith('.html'))) {
     const head = readFileSync(new URL(file, web), 'utf8').split('</head>')[0];
-    assert.equal(head.match(/<script>(.*?)<\/script>/s)[1], bootstrap, file);
+    assert.equal(head.match(/<script>(.*?)<\/script>/is)[1], bootstrap, file);
     assert.ok(head.indexOf('<script>') < head.indexOf('href="style.css"'), file);
     assert.ok(head.includes('<script src="theme.js" defer></script>'), file);
     assert.ok(!head.includes('<script src="theme.js"></script>'), file);
