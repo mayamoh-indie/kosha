@@ -4,7 +4,65 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 const context=vm.createContext({});
 vm.runInContext(`const monthKey=date=>date.toISOString().slice(0,7);\n${readFileSync('web/expense-data.js','utf8')}\n${readFileSync('web/finance-data.js','utf8')}\n${readFileSync('web/growth-data.js','utf8')}`,context);
-const {financeRecord,financeTotals,financeAmount,goalStatus,nextBillCycle,projectGrowth}=context;
+const {financeRecord,financeTotals,financeAmount,goalStatus,nextBillCycle,projectGrowth,investmentGroup,investmentTotals,parseFinance,investmentFlows,validateInvestmentLinks}=context;
+
+test('investment accounts group without duplicating assets or accessible cash',()=>{
+  const account=type=>financeRecord('accounts',{name:type,type,date:'2026-11-11',amount:'100',
+    contributed:investmentGroup(type)?'150':''},type);
+  const accounts=['TFSA','RRSP','FHSA','RESP','RRIF','LIRA','Non-registered','Investments','Savings','Property'].map(account);
+  const groups=investmentTotals(accounts);
+  assert.equal(groups[0].balance,60000);assert.equal(groups[0].count,6);
+  assert.equal(groups[1].balance,20000);assert.equal(groups[1].count,2);
+  assert.equal(investmentGroup('Savings'),null);assert.equal(investmentGroup('constructor'),null);
+  const totals=financeTotals({accounts,income:[]},[],[],'2026-11');
+  assert.equal(totals.assets,100000);assert.equal(totals.cash,10000);assert.equal(totals.netWorth,100000);
+  assert.equal(accounts[0].contributedCents,15000);
+  assert.equal(accounts[8].contributedCents,undefined);
+});
+
+test('investment contribution totals distinguish unknown and zero and reject invalid money',()=>{
+  const values={name:'Retirement',type:'RRSP',date:'2026-11-11',amount:'100'};
+  assert.equal(financeRecord('accounts',values,'a').contributedCents,undefined);
+  assert.equal(financeRecord('accounts',{...values,contributed:''},'a').contributedCents,undefined);
+  assert.equal(financeRecord('accounts',{...values,contributed:'0'},'a').contributedCents,0);
+  for(const contributed of ['-1','1.001','NaN',null,'1000000001'])assert.throws(()=>financeRecord('accounts',{...values,contributed},'a'));
+  assert.throws(()=>financeRecord('accounts',{...values,type:'Unknown'},'a'));
+  assert.throws(()=>financeRecord('accounts',{...values,type:'Savings',contributed:'150'},'a'),/clear the contribution/);
+});
+
+test('saved investment accounts retain legacy data and contribution totals on round trip',()=>{
+  const old={id:'old',name:'Existing account',type:'Investments',date:'2026-11-11',cents:12000};
+  const registered={...old,id:'new',type:'TFSA',contributedCents:0};
+  const saved={accounts:[old,registered],income:[],budgets:[],goals:[]};
+  const raw=JSON.stringify(saved),loaded=parseFinance(raw);
+  assert.deepEqual(JSON.parse(JSON.stringify(loaded)),{...saved,investmentActivity:[]});
+  assert.equal(loaded.accounts[0].contributedCents,undefined);
+  for(const value of [null,-1,0.5,'0',Infinity]) {
+    assert.throws(()=>parseFinance(JSON.stringify({...saved,accounts:[{...registered,contributedCents:value}]})));
+  }
+  for(const bad of ['{','null','{}'])assert.throws(()=>parseFinance(bad));
+  assert.equal(parseFinance(null).accounts.length,0);
+  assert.equal(raw,JSON.stringify(saved));
+});
+
+test('investment activity tracks dated contributions and withdrawals separately from balances',()=>{
+  const account={id:'a',name:'TFSA',type:'TFSA',date:'2026-11-11',cents:10000};
+  const activity=(direction,amount,id)=>financeRecord('investmentActivity',{name:'Statement entry',accountId:'a',date:'2026-11-11',direction,amount},id);
+  const contributions=activity('contribution','200.29','one'),withdrawal=activity('withdrawal','50','two');
+  const data={accounts:[account],income:[],budgets:[],goals:[],investmentActivity:[contributions,withdrawal]};
+  validateInvestmentLinks(data);
+  assert.deepEqual({...investmentFlows(data.investmentActivity,'a')},{contributions:20029,withdrawals:5000,net:15029});
+  assert.equal(investmentFlows(data.investmentActivity,'other').net,0);
+  assert.equal(financeTotals(data,[],[],'2026-11').assets,10000);
+  assert.equal(financeTotals(data,[],[],'2026-11').income,0);
+  assert.deepEqual(JSON.parse(JSON.stringify(parseFinance(JSON.stringify(data)))),JSON.parse(JSON.stringify(data)));
+  for(const changed of [[],[{...account,type:'Cash'}]])assert.throws(()=>validateInvestmentLinks({...data,accounts:changed}));
+  for(const changes of [{direction:'transfer'},{accountId:''},{date:'2026-02-30'},{amount:'0'},{amount:'-1'},{amount:'0.001'}]) {
+    assert.throws(()=>financeRecord('investmentActivity',{...contributions,amount:'100',...changes},'x'));
+  }
+  assert.throws(()=>parseFinance(JSON.stringify({...data,investmentActivity:null})));
+  assert.throws(()=>parseFinance(JSON.stringify({...data,accounts:[]})));
+});
 test('a bill is a flagged goal and plain goals stay unflagged',()=>{
   const values={name:'Car insurance',date:'2027-05-10',amount:'1200',saved:'300'};
   assert.equal(financeRecord('goals',{...values,bill:'on'},'id').bill,true);
