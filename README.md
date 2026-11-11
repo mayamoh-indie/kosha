@@ -29,7 +29,7 @@ Open http://127.0.0.1:8765. Stop with Ctrl+C. The sidebar links to:
 
 - **Home**: payoff progress, debt-free countdown, payoff timeline (total, by category, or by debt), and progress by category.
 - **Debts**: a card per debt (minimum, APR, balance, progress, payoff month), search and sort, and balance donuts by category and debt. *Edit debts* opens the worksheet to add/edit/remove debts, compare strategies, view the monthly schedule, and export CSV.
-- **Strategy**: pay day, monthly budget, one-time extra payments, payoff priority, a plan summary, and payments by month.
+- **Strategy**: pay day, monthly budget, one-time extra payments, payoff priority, a plan summary, and payments by month. *What if my spending changes?* previews how spending less or more each month moves the debt-free month and total interest, with last month's logged spending and this month's category budget as a guide. The preview saves nothing; *Use this as my debt budget* applies it.
 - **Payoff plan**: steps that each end when a debt is paid off, with the debts getting extra and monthly payment details.
 - **Tracking**: past-due and upcoming payments, marking them paid, completed payments, and a calendar. Records don't change balances; update balances from statements.
 - **Expenses**: log spending by date, category and amount, then see each month's total, the previous month, and a breakdown by category. Expenses don't change the debt plan.
@@ -54,6 +54,7 @@ python payoff.py sample-debts.json --json
 python -m unittest -v
 node --test test_expenses.mjs   # expense rules; needs Node 18 or newer
 node --test test_finance.mjs    # account totals and RRSP scenario mathematics
+node --test test_whatif.mjs     # spending what-if rules for the debt plan
 ```
 
 Input is a JSON object with `monthly_budget` and a `debts` array. Each debt needs a unique `name`, `balance`, `apr` (annual percentage, e.g. 20.99), and `minimum` monthly payment. Numbers and numeric strings are accepted. Amounts must be non-negative with at most two decimal places. APR must be between 0 and 100. Positive balances require positive minimums. Missing, null, non-finite, or invalid values are rejected, with errors listed per record; no incomplete portfolio is simulated. An empty debt list is already paid off.

@@ -1,5 +1,7 @@
 const $ = id => document.getElementById(id);
-let plan, results = [], view = 'split', revision = 0, timer;
+const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; };
+let plan, results = [], view = 'split', revision = 0, timer, whatIfTimer, whatIfRevision = 0;
+const {expenses} = loadExpenses(), budgets = savedBudgets();
 const duration = months => months >= 12 ? `${Math.floor(months / 12)} yr ${months % 12} mo` : `${months} mo`;
 
 async function load() {
@@ -24,7 +26,7 @@ function draft() {
 }
 
 const schedule = () => {
-  clearTimeout(timer); revision++; results = [];
+  clearTimeout(timer); revision++; results = []; runWhatIf();
   for (const id of ['priorities', 'summary-rows', 'payments-chart', 'payments-legend']) $(id).replaceChildren();
   $('error').textContent = 'Inputs changed. Updating your plan…';
   timer = setTimeout(update, 350);
@@ -77,6 +79,37 @@ function render() {
     return row;
   }));
   drawPayments(result);
+  runWhatIf();
+}
+
+function showGuide() {
+  const key = $('whatif-category').value, label = EXPENSE_CATEGORIES[key].label, guide = spendingGuide(expenses, budgets, key, new Date());
+  $('whatif-guide').textContent = (guide.spentCents ? `Last month you logged ${money(guide.spentCents / 100)} on ${label}.` : `No ${label} spending logged last month.`)
+    + (guide.budgetCents === null ? '' : ` This month’s budget is ${money(guide.budgetCents / 100)}.`);
+}
+
+// Preview only: runs the plan again with the changed budget and compares. The saved plan is untouched.
+async function runWhatIf() {
+  const version = ++whatIfRevision, box = $('whatif-result'), current = plan && (results[plan.strategy] || results[0]);
+  const line = (label, value) => { const row = el('div', 'tool-line'); row.append(el('span', '', label), el('strong', '', value)); return row; };
+  const headline = text => el('p', 'whatif-headline', text);
+  box.replaceChildren(); $('whatif-apply').hidden = true;
+  if (!$('whatif-amount').value || !current) return;
+  try {
+    const budget = whatIfBudget(plan.monthly_budget, $('whatif-amount').value, $('whatif-direction').value);
+    const all = await calculatePlan({...plan, monthly_budget: budget}), changed = all[plan.strategy] || all[0];
+    if (version !== whatIfRevision) return;
+    const outcome = whatIfOutcome(current, changed), budgetLine = line('Monthly debt budget', `${money(plan.monthly_budget)} → ${money(budget)}`);
+    if (outcome.kind === 'unpaid') { box.append(headline(outcome.broken ? 'This change would stop your plan from paying off.' : 'Your plan still would not pay off.'), line('Why', outcome.message), budgetLine); return; }
+    if (outcome.kind === 'now_paid') box.append(headline(`Debt-free in ${planMonth(plan, outcome.months)}`), line('Debt-free now', 'No payoff'));
+    else {
+      const {months, interestCents} = outcome, interest = money(Math.abs(interestCents) / 100);
+      const when = months ? `${duration(Math.abs(months))} ${months > 0 ? 'sooner' : 'later'}` : 'Same debt-free month';
+      box.append(headline(interestCents ? `${when} · ${interest} ${interestCents > 0 ? 'less' : 'more'} interest` : when), line('Debt-free now', planMonth(plan, current.months)));
+    }
+    box.append(line('With this change', planMonth(plan, changed.months)), budgetLine);
+    $('whatif-apply').dataset.budget = budget; $('whatif-apply').hidden = false;
+  } catch (error) { if (version === whatIfRevision) box.append(headline(error.message)); }
 }
 
 function drawPayments(result) {
@@ -108,6 +141,11 @@ for (const tab of document.querySelectorAll('[data-view]')) tab.addEventListener
   if (results.length) drawPayments(results[plan.strategy] || results[0]);
 });
 $('budget').addEventListener('input', schedule);
+$('whatif-category').append(...Object.entries(EXPENSE_CATEGORIES).map(([key, {label}]) => new Option(label, key)));
+$('whatif-category').addEventListener('change', showGuide);
+for (const id of ['whatif-amount', 'whatif-direction']) $(id).addEventListener('input', () => { clearTimeout(whatIfTimer); whatIfTimer = setTimeout(runWhatIf, 350); });
+$('whatif-apply').addEventListener('click', () => { $('budget').value = $('whatif-apply').dataset.budget; $('whatif-amount').value = ''; schedule(); });
+showGuide();
 $('pay-day').addEventListener('change', schedule);
 $('extras').addEventListener('input', schedule);
 $('add-extra').addEventListener('click', () => { addExtra(); $('extras').lastChild.querySelector('input').focus(); });
