@@ -12,7 +12,8 @@ PORT = 8765
 PAGES = ['index.html', 'debts.html', 'planner.html', 'strategy.html', 'plan.html', 'track.html', 'expenses.html',
          'salary.html', 'rrsp.html', 'style.css', 'api.js', 'categories.js', 'store.js', 'home.js',
          'debts.js', 'app.js', 'strategy.js', 'plan.js', 'track.js', 'tools.js', 'expense-data.js', 'expenses.js',
-         'finance.html', 'finance.js', 'finance-data.js', 'growth.html', 'growth.js', 'growth-data.js']
+         'finance.html', 'finance.js', 'finance-data.js', 'growth.html', 'growth.js', 'growth-data.js',
+         'engine-worker.js']
 TYPES = {'html': 'text/html; charset=utf-8', 'css': 'text/css; charset=utf-8',
          'js': 'text/javascript; charset=utf-8'}
 # Fixed allowlist of servable files: request paths only select an entry, never build a path.
