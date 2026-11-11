@@ -27,7 +27,7 @@ class DashboardTests(unittest.TestCase):
         for page in sorted((ROOT / 'web').glob('*.html')):
             head = page.read_text(encoding='utf-8').split('</head>')[0]
             self.assertIn('<script src="theme.js" defer></script>', head, page.name)
-            bootstrap = re.search(r'<script>(.*?)</script>', head).group(1)
+            bootstrap = re.search(r'<script>(.*?)</script>', head, flags=re.IGNORECASE | re.DOTALL).group(1)
             digest = base64.b64encode(hashlib.sha256(bootstrap.encode()).digest()).decode()
             self.assertEqual(f'sha256-{digest}', THEME_HASH, page.name)
             self.assertLess(head.index('<script>'), head.index('href="style.css"'), page.name)
