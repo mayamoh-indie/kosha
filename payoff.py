@@ -139,10 +139,10 @@ def calculate(debts: list[Debt], budget: Decimal, strategy: str,
         paid_total += sum(payments, ZERO)
         if not any(balances):
             return result('paid_off', month, 'All debts repaid.')
-        # With fixed rates and payments, no individual principal reduction means
-        # this plan cannot recover without changing its inputs.
+        # A future one-time payment may still make this plan recover.
         if sum(balances, ZERO) >= previous and all(
-                payment <= charge for payment, charge in zip(payments, interest)):
+                payment <= charge for payment, charge in zip(payments, interest)) and not any(
+                month < future <= max_months and amount > ZERO for future, amount in lump_sums.items()):
             return result('not_reducing', month, 'Payments do not reduce any debt principal.')
     return result('limit_reached', max_months, 'Not paid off within the simulation limit.')
 

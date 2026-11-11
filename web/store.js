@@ -8,7 +8,16 @@ const monthKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).pa
 
 function readStore(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
 function writeStore(key, value) {
-  try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(value)); } catch {}
+  try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(value)); }
+  catch {
+    // Best effort: keep the current page usable, but never imply the data was saved.
+    let warning = document.getElementById('storage-warning');
+    if (!warning) {
+      warning = document.createElement('p'); warning.id = 'storage-warning'; warning.setAttribute('role', 'alert');
+      document.body.prepend(warning);
+    }
+    warning.textContent = 'Your changes could not be saved in this browser. Keep this page open and copy your entries before leaving.';
+  }
 }
 
 // Plan month 0 is the month balances were entered (`start`); month 1 is the next calendar month.

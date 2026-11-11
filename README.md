@@ -33,6 +33,8 @@ Open http://127.0.0.1:8765. Stop with Ctrl+C. The sidebar links to:
 - **Payoff plan**: steps that each end when a debt is paid off, with the debts getting extra and monthly payment details.
 - **Tracking**: past-due and upcoming payments, marking them paid, completed payments, and a calendar. Records don't change balances; update balances from statements.
 - **Expenses**: log spending by date, category and amount, then see each month's total, the previous month, and a breakdown by category. Expenses don't change the debt plan.
+- **Money overview**: add/edit/delete asset accounts, received income, monthly category budgets, and savings goals. Budget spending uses the expense log. Assets minus saved debt balances gives net worth; without a saved debt plan the liability total is unknown. Account balances are dated snapshots, separate from logged activity. Goal earmarks are already part of those balances and never add assets again. Monthly goal estimates spread the remaining amount across calendar months until the target; due or past targets show the amount still needed.
+- **RRSP growth**: monthly contribution scenarios with configurable nominal returns, fees, years and inflation, a chart and annual table. Optional available-room input checks the first 12 months (or shorter scenario), without calculating personal CRA room or assuming future room. No tax refunds or withdrawal taxes are included.
 - **Salary** and **RRSP withdrawal** calculators.
 
 Dates come from the plan's start month: submitting balances makes this month month 0, and month 1 is next month. Payments fall on the chosen pay day (1–28). Progress uses each debt's optional original amount; without it, that debt counts as 0% paid. Each debt has a category; older saved plans default to Other.
@@ -51,6 +53,7 @@ python payoff.py sample-debts.json --budget 800 --strategy avalanche
 python payoff.py sample-debts.json --json
 python -m unittest -v
 node --test test_expenses.mjs   # expense rules; needs Node 18 or newer
+node --test test_finance.mjs    # account totals and RRSP scenario mathematics
 ```
 
 Input is a JSON object with `monthly_budget` and a `debts` array. Each debt needs a unique `name`, `balance`, `apr` (annual percentage, e.g. 20.99), and `minimum` monthly payment. Numbers and numeric strings are accepted. Amounts must be non-negative with at most two decimal places. APR must be between 0 and 100. Positive balances require positive minimums. Missing, null, non-finite, or invalid values are rejected, with errors listed per record; no incomplete portfolio is simulated. An empty debt list is already paid off.

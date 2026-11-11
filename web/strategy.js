@@ -23,7 +23,12 @@ function draft() {
   return {...plan, pay_day: Number($('pay-day').value), monthly_budget: $('budget').value, extra_payments: extras.filter(extra => extra.month || extra.amount)};
 }
 
-const schedule = () => { clearTimeout(timer); timer = setTimeout(update, 350); };
+const schedule = () => {
+  clearTimeout(timer); revision++; results = [];
+  for (const id of ['priorities', 'summary-rows', 'payments-chart', 'payments-legend']) $(id).replaceChildren();
+  $('error').textContent = 'Inputs changed. Updating your plan…';
+  timer = setTimeout(update, 350);
+};
 
 // Recalculate with the form's values and save them once they are valid.
 async function update(persist = true) {

@@ -39,6 +39,8 @@ class DashboardTests(unittest.TestCase):
             self.assertEqual(response.status, 200)
             self.assertIn(b'Payoff progress', response.read())
             pages = [('/planner.html', b'A clearer path'), ('/debts.html', b'debt-list'), ('/strategy.html', b'priorities'),
+                     ('/finance.html', b'entry-form'), ('/finance-data.js', b'financeTotals'),
+                     ('/growth.html', b'growth-form'), ('/growth-data.js', b'projectGrowth'),
                      ('/plan.html', b'steps'), ('/track.html', b'upcoming'), ('/store.js', b'kosha-plan'),
                      ('/expenses.html', b'expense-form'), ('/expense-data.js', b'kosha-expenses'),
                      ('/expenses.js', b'makeExpense'),

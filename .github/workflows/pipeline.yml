@@ -31,7 +31,7 @@ jobs:
       - name: Run JavaScript tests
         shell: bash
         run: |
-          node --test test_expenses.mjs
+          node --test test_expenses.mjs test_finance.mjs
       - name: Summary
         if: always()
         shell: bash

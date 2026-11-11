@@ -10,6 +10,13 @@ from payoff import Debt, calculate, number, parse_debts
 
 
 class PayoffTests(unittest.TestCase):
+    def test_future_extra_can_rescue_nonreducing_plan(self):
+        debt = Debt('Card', D('1000'), D('24'), D('20'))
+        result = calculate([debt], D('20'), 'avalanche', lump_sums={2: D('1000')})
+        self.assertEqual(result.status, 'paid_off')
+        self.assertEqual(result.months, 2)
+        self.assertEqual(result.interest, D('40'))
+
     def test_known_interest_and_last_payment(self):
         result = calculate([Debt('Card', D('100'), D('12'), D('10'))], D('60'), 'avalanche')
         self.assertEqual(result.months, 2)
