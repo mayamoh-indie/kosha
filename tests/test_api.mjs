@@ -15,7 +15,7 @@ function load() {
     crash() { this.onerror({preventDefault() {}}); }
   }
   const context = vm.createContext({Worker, location: {hostname: 'example.github.io'}, JSON, Map, Promise, Error});
-  vm.runInContext(readFileSync(new URL('web/api.js', import.meta.url), 'utf8'), context);
+  vm.runInContext(readFileSync(new URL('../web/api.js', import.meta.url), 'utf8'), context);
   return {api: vm.runInContext('api', context), workers};
 }
 

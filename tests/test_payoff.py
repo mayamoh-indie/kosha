@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 from decimal import Decimal as D
 
-from payoff import Debt, calculate, number, parse_debts
+from app.payoff import Debt, calculate, number, parse_debts
 
 
 class PayoffTests(unittest.TestCase):
@@ -82,16 +82,17 @@ class PayoffTests(unittest.TestCase):
                 number(value, 'amount')
 
     def test_cli_json_and_malformed_input(self):
-        script = Path(__file__).with_name('payoff.py')
-        with tempfile.TemporaryDirectory(dir=script.parent) as folder:
+        root = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory(dir=root) as folder:
             source = Path(folder) / 'input.json'
             source.write_text('{broken', encoding='utf-8')
-            bad = subprocess.run([sys.executable, str(script), str(source)], capture_output=True, text=True)
+            bad = subprocess.run([sys.executable, '-m', 'app.payoff', str(source)], capture_output=True, text=True, cwd=root)
             self.assertEqual(bad.returncode, 2)
             self.assertIn('Error:', bad.stderr)
             self.assertNotIn('Traceback', bad.stderr)
             source.write_text(json.dumps({'monthly_budget': '10', 'debts': []}), encoding='utf-8')
-            good = subprocess.run([sys.executable, str(script), str(source), '--json'], capture_output=True, text=True)
+            good = subprocess.run([sys.executable, '-m', 'app.payoff', str(source), '--json'],
+                                  capture_output=True, text=True, cwd=root)
             self.assertEqual(good.returncode, 0)
             self.assertEqual(json.loads(good.stdout)[0]['remaining'], '0.00')
 

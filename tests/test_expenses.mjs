@@ -10,7 +10,7 @@ function load(saved) {
   const localStorage = {getItem: key => store.get(key) ?? null, setItem: (key, value) => store.set(key, value),
     removeItem: key => store.delete(key)};
   const context = vm.createContext({localStorage});
-  for (const file of ['store.js', 'expense-data.js']) vm.runInContext(readFileSync(new URL(`web/${file}`, import.meta.url), 'utf8'), context);
+  for (const file of ['store.js', 'expense-data.js']) vm.runInContext(readFileSync(new URL(`../web/${file}`, import.meta.url), 'utf8'), context);
   const run = code => vm.runInContext(code, context);
   return {run, saved: () => JSON.parse(store.get('kosha-expenses'))};
 }

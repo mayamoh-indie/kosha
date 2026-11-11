@@ -1,9 +1,9 @@
-// Locally, dashboard.py answers API calls. On static hosting (GitHub Pages, served straight
+// Locally, app/dashboard.py answers API calls. On static hosting (GitHub Pages, served straight
 // from the repository with pages under web/), the same Python engine runs in the browser
 // through Pyodide, so inputs never leave the page. Pyodide runs in engine-worker.js, off the
 // main thread, because loading and compiling it would otherwise freeze the page for seconds.
 const LOCAL = ['127.0.0.1', 'localhost'].includes(location.hostname);
-// Repository-root files (sample data): dashboard.py serves them at /, Pages one level up.
+// Repository root: the local server serves it at /; Pages keeps web/ one level below.
 const REPO_ROOT = LOCAL ? '/' : '../';
 let worker, nextId = 0;
 const pending = new Map();  // request id -> {resolve, reject}; replies can arrive in any order

@@ -7,8 +7,8 @@ import unittest
 from http.client import HTTPConnection
 from http.server import ThreadingHTTPServer
 
-from api import compare
-from dashboard import ROOT, THEME_HASH, Handler
+from app.api import compare
+from app.dashboard import ROOT, THEME_HASH, Handler
 
 
 class DashboardTests(unittest.TestCase):
@@ -72,7 +72,8 @@ class DashboardTests(unittest.TestCase):
             self.assertIn(THEME_HASH, response.getheader('Content-Security-Policy'))
             self.assertNotIn("'unsafe-inline'", response.getheader('Content-Security-Policy'))
             self.assertIn(b'Payoff progress', response.read())
-            pages = [('/planner.html', b'A clearer path'), ('/debts.html', b'debt-list'), ('/strategy.html', b'priorities'),
+            pages = [('/data/sample-debts.json', b'monthly_budget'),
+                     ('/planner.html', b'A clearer path'), ('/debts.html', b'debt-list'), ('/strategy.html', b'priorities'),
                      ('/finance.html', b'entry-form'), ('/finance-data.js', b'financeTotals'),
                      ('/growth.html', b'growth-form'), ('/growth-data.js', b'projectGrowth'),
                      ('/whatif-data.js', b'whatIfBudget'), ('/strategy.js', b'runWhatIf'), ('/theme.js', b'kosha-theme'),
@@ -87,7 +88,8 @@ class DashboardTests(unittest.TestCase):
                 response = connection.getresponse()
                 self.assertEqual(response.status, 200)
                 self.assertIn(marker, response.read())
-            for path in ['/../README.md', '/web/../api.py', '/dashboard.py', '/%2e%2e/api.py']:
+            for path in ['/../README.md', '/web/../api.py', '/dashboard.py', '/%2e%2e/api.py',
+                         '/app/dashboard.py', '/app/api.py', '/data/../app/api.py']:
                 connection.request('GET', path, headers=headers)
                 response = connection.getresponse()
                 self.assertEqual(response.status, 404, path)
