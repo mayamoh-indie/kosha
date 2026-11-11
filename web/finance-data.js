@@ -34,7 +34,7 @@ const BILL_SOON_DAYS = 30;
 function goalStatus(item, today) {
   const remaining = Math.max(0, item.cents - item.saved);
   const months = (Number(item.date.slice(0, 4)) - Number(today.slice(0, 4))) * 12 + Number(item.date.slice(5, 7)) - Number(today.slice(5, 7));
-  const days = Math.round((Date.parse(item.date) - Date.parse(today)) / 86400000);
+  const days = (Date.parse(item.date) - Date.parse(today)) / 86400000;
   const due = item.bill !== true ? null : days < 0 ? 'past' : days <= BILL_SOON_DAYS ? 'soon' : null;
   return {remaining, months, monthly: months > 0 ? Math.ceil(remaining / months) : remaining, due};
 }

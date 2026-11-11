@@ -54,8 +54,8 @@ function render() {
         detail=`${EXPENSE_CATEGORIES[item.category].label}: ${dollars(spent)} spent of ${dollars(item.cents)} · ${dollars(Math.abs(item.cents-spent))} ${spent>item.cents?'over budget':'left'}`;
       }
       if(kind==='goals') {
-        const bill=item.bill===true, {remaining,months,monthly,due}=goalStatus(item,dayKey(new Date()));
-        detail=`${dollars(item.saved)} earmarked of ${dollars(item.cents)} · due ${item.date}. `+(remaining===0?`${bill?'Bill':'Goal'} funded.`:months<=0?`${dollars(remaining)} still needed; ${bill?'bill':'target'} is due or past.`:`${bill?'Reserve':'Set aside'} about ${dollars(monthly)}/month for ${months} months.`);
+        const {remaining,months,monthly,due}=goalStatus(item,dayKey(new Date())), [noun,what,verb]=item.bill===true?['Bill','bill','Reserve']:['Goal','target','Set aside'];
+        detail=`${dollars(item.saved)} earmarked of ${dollars(item.cents)} · due ${item.date}. `+(remaining===0?`${noun} funded.`:months<=0?`${dollars(remaining)} still needed; ${what} is due or past.`:`${verb} about ${dollars(monthly)}/month for ${months} months.`);
         if(due){const tag=element('span',due==='soon'?'Due soon':'Past due date');tag.className='pill';text.append(' ',tag);}
         const progress=document.createElement('progress');progress.max=item.cents;progress.value=Math.min(item.saved,item.cents);progress.setAttribute('aria-label',item.name+' progress');text.append(progress);
       }
@@ -65,7 +65,7 @@ function render() {
       row.append(change,remove);
       if(kind==='goals'&&item.bill===true) {
         // Paying is confirmed by the user and never logs an expense: the money leaves through their own records.
-        const paid=element('button','Mark paid');paid.className='secondary';paid.onclick=()=>{
+        const paid=element('button','Mark paid');paid.className='secondary';paid.setAttribute('aria-label','Mark paid: '+item.name);paid.onclick=()=>{
           $('error').textContent='';
           try {
             const next=nextBillCycle(item);
