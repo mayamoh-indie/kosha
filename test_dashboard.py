@@ -26,6 +26,15 @@ class DashboardTests(unittest.TestCase):
             head = page.read_text(encoding='utf-8').split('</head>')[0]
             self.assertIn('<script src="theme.js"></script>', head, page.name)  # no defer: avoids a light flash
 
+    def test_every_page_has_its_own_search_description(self):
+        descriptions = {}
+        for page in [ROOT / 'index.html', *sorted((ROOT / 'web').glob('*.html'))]:
+            head = page.read_text(encoding='utf-8').split('</head>')[0]
+            match = re.search(r'<meta name="description" content="([^"]{20,160})">', head)
+            self.assertIsNotNone(match, page.name)
+            descriptions[page] = match.group(1)
+        self.assertEqual(len(set(descriptions.values())), len(descriptions))  # no copied descriptions
+
     def test_comparison_uses_existing_engine(self):
         results = compare({'debts': [{'name': 'Card', 'balance': '100', 'apr': '12', 'minimum': '10'}], 'monthly_budget': '60'})
         self.assertEqual(len(results), 3)
