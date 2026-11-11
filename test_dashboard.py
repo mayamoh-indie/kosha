@@ -40,6 +40,7 @@ class DashboardTests(unittest.TestCase):
             self.assertIn(b'Payoff progress', response.read())
             pages = [('/planner.html', b'A clearer path'), ('/debts.html', b'debt-list'), ('/strategy.html', b'priorities'),
                      ('/plan.html', b'steps'), ('/track.html', b'upcoming'), ('/store.js', b'kosha-plan'),
+                     ('/expenses.html', b'expense-form'), ('/expenses.js', b'kosha-expenses'),
                      ('/salary.html', b'salary-form'), ('/rrsp.html', b'rrsp-form'), ('/api.js', b'pyodide')]
             for path, marker in pages:
                 connection.request('GET', path, headers=headers)

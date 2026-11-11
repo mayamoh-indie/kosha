@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kosha · Expenses</title><link rel="stylesheet" href="style.css"><script src="store.js" defer></script><script src="expenses.js" defer></script></head>
+<body><aside class="sidebar"><a class="brand" href="./" aria-label="Kosha home"><span class="mark">K</span> kosha<span class="brand-dot">.</span></a><p class="tagline">A little clarity. A way forward.</p><div class="nav-label">YOUR MONEY</div><a class="nav" href="./">Home</a><a class="nav" href="debts.html">Debts</a><a class="nav" href="strategy.html">Strategy</a><a class="nav" href="plan.html">Payoff plan</a><a class="nav" href="track.html">Tracking</a><a class="nav active" href="expenses.html" aria-current="page">Expenses</a><a class="nav" href="salary.html">Salary</a><a class="nav" href="rrsp.html">RRSP withdrawal</a><div class="sidebar-note"><span>Made for your next chapter.</span><p>Know where it goes.</p></div><small>Ontario first · All amounts in CAD</small></aside>
+<main><header><span>YOUR FINANCIAL ASSISTANT</span><span class="pill">Prototype · Saved in this browser only</span></header><nav class="mobile-nav"><a href="./">Home</a><a href="debts.html">Debts</a><a href="strategy.html">Strategy</a><a href="plan.html">Payoff plan</a><a href="track.html">Tracking</a><a href="expenses.html">Expenses</a><a href="salary.html">Salary</a><a href="rrsp.html">RRSP withdrawal</a></nav>
+<section class="intro"><div><p class="eyebrow">EXPENSES</p><h1>See where your money goes.</h1><p>Log what you spend and see it by category each month.</p></div></section>
+<p id="error" role="alert"></p>
+<div class="split"><div>
+<section class="panel"><h2>Add an expense</h2><form id="expense-form" class="expense-form" novalidate>
+<label>Date<input id="date" type="date" required></label><label>Amount (CAD)<input id="amount" type="number" min="0.01" max="1000000" step="0.01" inputmode="decimal" required></label>
+<label>Description<input id="description" maxlength="80" placeholder="e.g. Weekly groceries"></label><label>Category<select id="category"></select></label>
+<button class="primary" type="submit"><span>Add expense</span><span>+</span></button></form></section>
+<section class="panel stack"><div class="month-nav"><button id="prev" class="secondary" type="button" aria-label="Previous month">‹</button><h3 id="month-title"></h3><button id="next" class="secondary" type="button" aria-label="Next month">›</button></div><div id="expense-list"></div></section>
+</div><div class="side">
+<section class="panel"><h3>This month</h3><div class="tool-hero"><span id="total-label">Spent</span><strong id="total">–</strong></div><div class="tool-line"><span>Previous month</span><strong id="previous">–</strong></div><div class="tool-line"><span>Expenses logged</span><strong id="count">–</strong></div></section>
+<section class="panel"><h3>By category</h3><div id="by-category"></div></section>
+</div></div>
+<p class="muted note">Expenses are a record of your spending. They don’t change your debt plan or budget.</p>
+<footer>KOSHA <span>Your records stay in this browser</span></footer></main></body></html>

@@ -32,11 +32,12 @@ Open http://127.0.0.1:8765. Stop with Ctrl+C. The sidebar links to:
 - **Strategy**: pay day, monthly budget, one-time extra payments, payoff priority, a plan summary, and payments by month.
 - **Payoff plan**: steps that each end when a debt is paid off, with the debts getting extra and monthly payment details.
 - **Tracking**: past-due and upcoming payments, marking them paid, completed payments, and a calendar. Records don't change balances; update balances from statements.
+- **Expenses**: log spending by date, category and amount, then see each month's total, the previous month, and a breakdown by category. Expenses don't change the debt plan.
 - **Salary** and **RRSP withdrawal** calculators.
 
 Dates come from the plan's start month: submitting balances makes this month month 0, and month 1 is next month. Payments fall on the chosen pay day (1–28). Progress uses each debt's optional original amount; without it, that debt counts as 0% paid. Each debt has a category; older saved plans default to Other.
 
-Until you edit the fictional sample, pages show it. Your plan and payment records are saved in this browser's local storage only (never sent anywhere) and can be cleared from Home. This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in or bank connection is included.
+Until you edit the fictional sample, pages show it. Your plan, payment records and expenses are saved in this browser's local storage only (never sent anywhere) and the plan and payments can be cleared from Home (delete expenses one by one on Expenses). This local development server binds only to loopback, rejects untrusted origins/hosts, and is not a production hosting setup. No sign-in or bank connection is included.
 
 The salary tool estimates 2026 Ontario annualized take-home pay. The RRSP tool calculates gross-to-net withholding and the minimum gross withdrawal for a target net amount. See [tax assumptions and official sources](TAX_ASSUMPTIONS.md) for scope and exclusions.
 
