@@ -25,17 +25,17 @@ Compare the estimated months and total interest, then inspect the chart and paym
 
 Open **Strategy** to choose a monthly payment day (1–28), adjust the debt budget or add one-time extra payments. Changes there save automatically. In **What if my spending changes?**, choose a category, Less or More, and an amount per month. The preview shows the effect on your debt-free month and interest. Only **Use this as my debt budget** applies that preview; it does not change expense records or category budgets.
 
-Use **Home** for your timeline and category progress, **Payoff plan** for the steps, and **Tracking** for the payment calendar. Marking a payment paid records completion only; update balances from your statements through **Edit debts**. Submitting new balances restarts the plan clock: this month becomes month 0 and the next month is month 1.
+Open **Debts** for your timeline and category progress; its links lead to **All debts**, **Strategy**, **Payoff plan** for the steps, and **Tracking** for the payment calendar. Marking a payment paid records completion only; update balances from your statements through **Edit debts**. Submitting new balances restarts the plan clock: this month becomes month 0 and the next month is month 1.
 
 ## Add everyday money tracking
 
-In **Money overview**, select an entry type to record asset balances, income received, monthly category budgets or savings goals. In **Expenses**, log actual spending by date and category; the monthly budget comparisons use that log. A budget is a category limit for its selected month, not an automatic recurring transaction.
+On **Home**, select an entry type to record asset balances, income received, monthly category budgets or savings goals. In **Expenses**, log actual spending by date and category; the monthly budget comparisons use that log. A budget is a category limit for its selected month, not an automatic recurring transaction.
 
 Asset balances are dated snapshots. Income and expense entries do not automatically update them. Avoid recording transfers and debt repayments as income or expenses. Goal earmarks are already part of your account balances. If you have no debt, save an empty debt plan so net worth can distinguish zero debt from unknown debt.
 
 ## Keep your entries
 
-Return in the same browser and profile to see saved data. There is no cloud backup or device sync. **Clear my saved plan** on Home removes the plan and payment records; expenses are deleted individually on Expenses, and money-overview entries have their own Delete buttons. Unreadable expense entries are hidden and preserved.
+Return in the same browser and profile to see saved data. There is no cloud backup or device sync. **Clear my saved plan** on the Debts page removes the plan and payment records; expenses are deleted individually on Expenses, and money-overview entries have their own Delete buttons. Unreadable expense entries are hidden and preserved.
 
 The fictional sample itself is not saved until you edit it.
 

@@ -12,9 +12,9 @@ PORT = 8765
 # Authorize only the exact inline theme bootstrap; tests check every page against this hash.
 THEME_HASH = 'sha256-tSXi1pIjVYnybZEjpMoMUVqQzAiepX1PlmI6XKoyXB8='
 PAGES = ['index.html', 'debts.html', 'planner.html', 'strategy.html', 'plan.html', 'track.html', 'expenses.html',
-         'salary.html', 'rrsp.html', 'style.css', 'api.js', 'categories.js', 'store.js', 'home.js',
-         'debts.js', 'app.js', 'strategy.js', 'plan.js', 'track.js', 'tools.js', 'expense-data.js', 'expenses.js',
-         'finance.html', 'finance.js', 'finance-data.js', 'growth.html', 'growth.js', 'growth-data.js',
+         'salary.html', 'rrsp.html', 'style.css', 'api.js', 'categories.js', 'store.js', 'debt-list.html',
+         'debts.js', 'debt-list.js', 'app.js', 'strategy.js', 'plan.js', 'track.js', 'tools.js', 'expense-data.js', 'expenses.js',
+         'finance.js', 'finance-data.js', 'growth.html', 'growth.js', 'growth-data.js',
          'whatif-data.js', 'theme.js', 'menu.js', 'engine-worker.js']
 TYPES = {'html': 'text/html; charset=utf-8', 'css': 'text/css; charset=utf-8',
          'js': 'text/javascript; charset=utf-8'}

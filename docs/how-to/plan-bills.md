@@ -4,7 +4,7 @@ Use this for a known future charge such as insurance, property tax or a membersh
 
 ## Create a bill
 
-1. Open **Money overview**.
+1. Open **Home**.
 2. Under **Add or edit an entry**, set **Entry type** to **Savings goal**.
 3. Enter a name, the **Target or due date**, and the **Target or bill amount (CAD)**.
 4. Enter the **Amount earmarked (CAD)** you have already set aside.
