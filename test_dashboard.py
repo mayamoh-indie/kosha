@@ -1,14 +1,29 @@
 import json
+import re
 import threading
 import unittest
 from http.client import HTTPConnection
 from http.server import ThreadingHTTPServer
 
 from api import compare
-from dashboard import Handler
+from dashboard import ROOT, Handler
 
 
 class DashboardTests(unittest.TestCase):
+    def test_every_page_lists_navigation_in_the_same_order(self):
+        def links(html, pattern):
+            return re.findall(r'<a [^>]*href="([^"]+)"', re.search(pattern, html).group(0))
+
+        expected = None
+        for page in sorted((ROOT / 'web').glob('*.html')):
+            html = page.read_text(encoding='utf-8')
+            sidebar = links(html, r'<aside class="sidebar">.*?</aside>')[1:]  # skip the brand link
+            mobile = links(html, r'<nav class="mobile-nav">.*?</nav>')
+            expected = expected or sidebar
+            self.assertEqual(sidebar, expected, page.name)
+            self.assertEqual(mobile, expected, page.name)
+        self.assertEqual(expected[0], './')
+
     def test_comparison_uses_existing_engine(self):
         results = compare({'debts': [{'name': 'Card', 'balance': '100', 'apr': '12', 'minimum': '10'}], 'monthly_budget': '60'})
         self.assertEqual(len(results), 3)
